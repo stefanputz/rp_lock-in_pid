@@ -99,6 +99,7 @@ void reset_locks(void)
         g_lock_reg->rl_state             =      0;
         g_lock_reg->sf_jumpA             =      0;
         g_lock_reg->sf_jumpB             =      0;
+        g_lock_reg->sf_jumpC             =      0;
         g_lock_reg->sf_config            =      0;
         g_lock_reg->signal_sw            =      0;
         g_lock_reg->signal_i             =      0;
@@ -186,6 +187,19 @@ void reset_locks(void)
         g_lock_reg->pidB_out             =      0;
         g_lock_reg->pidB_ctrl            =      0;
         g_lock_reg->ctrl_B               =      0;
+        g_lock_reg->pidC_sw              =      0;
+        g_lock_reg->pidC_PSR             =      3;
+        g_lock_reg->pidC_ISR             =      8;
+        g_lock_reg->pidC_DSR             =      0;
+        g_lock_reg->pidC_SAT             =     13;
+        g_lock_reg->pidC_sp              =      0;
+        g_lock_reg->pidC_kp              =      0;
+        g_lock_reg->pidC_ki              =      0;
+        g_lock_reg->pidC_kd              =      0;
+        g_lock_reg->pidC_in              =      0;
+        g_lock_reg->pidC_out             =      0;
+        g_lock_reg->pidC_ctrl            =      0;
+        g_lock_reg->ctrl_C               =      0;
         g_lock_reg->aux_A                =      0;
         g_lock_reg->aux_B                =      0;
     }
