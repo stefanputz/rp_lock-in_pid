@@ -125,14 +125,14 @@
                        'lock_lpf_F3_tau,lock_lpf_F3_order,lock_lpf_sq_tau,lock_lpf_sq_order,lock_error_sw,lock_error_offset,lock_gen_mod_phase,'+
                        'lock_gen_mod_phase_sq,lock_gen_mod_hp,lock_gen_mod_sqp,lock_ramp_step,lock_ramp_low_lim,lock_ramp_hig_lim,lock_ramp_reset,'+
                        'lock_ramp_enable,lock_ramp_direction,lock_ramp_B_factor,lock_read_ctrl,lock_pidA_sw,lock_pidA_PSR,lock_pidA_ISR,'+
-                       'lock_pidA_DSR,lock_pidA_SAT,lock_pidA_sp,lock_pidA_kp,lock_pidA_ki,lock_pidA_kd,lock_pidA_irst,lock_pidA_freeze,'+
-                       'lock_pidA_ifreeze,lock_pidB_sw,lock_pidB_PSR,lock_pidB_ISR,lock_pidB_DSR,lock_pidB_SAT,lock_pidB_sp,lock_pidB_kp,'+
-                       'lock_pidB_ki,lock_pidB_kd,lock_pidB_irst,lock_pidB_freeze,lock_pidB_ifreeze,lock_pidC_sw,lock_pidC_PSR,lock_pidC_ISR,'+
-                       'lock_pidC_DSR,lock_pidC_SAT,lock_pidC_sp,lock_pidC_kp,lock_pidC_ki,lock_pidC_kd,lock_pidC_irst,lock_pidC_freeze,'+
-                       'lock_pidC_ifreeze,lock_aux_A,lock_aux_B,lock_ctrl_aux_lock_now,lock_ctrl_aux_launch_lock_trig,lock_ctrl_aux_pidC_enable_ctrl,'+
-                       'lock_ctrl_aux_pidB_enable_ctrl,lock_ctrl_aux_pidA_enable_ctrl,lock_ctrl_aux_ramp_enable_ctrl,lock_ctrl_aux_set_pidC_enable,'+
-                       'lock_ctrl_aux_set_pidB_enable,lock_ctrl_aux_set_pidA_enable,lock_ctrl_aux_set_ramp_enable,lock_ctrl_aux_trig_type,'+
-                       'lock_ctrl_aux_lock_trig_rise,lock_mod_sq_on,lock_mod_harmonic_on';
+                       'lock_pidA_DSR,lock_pidA_SAT,lock_pidA_sp,lock_pidA_ofs,lock_pidA_kp,lock_pidA_ki,lock_pidA_kd,lock_pidA_irst,'+
+                       'lock_pidA_freeze,lock_pidA_ifreeze,lock_pidB_sw,lock_pidB_PSR,lock_pidB_ISR,lock_pidB_DSR,lock_pidB_SAT,lock_pidB_sp,'+
+                       'lock_pidB_ofs,lock_pidB_kp,lock_pidB_ki,lock_pidB_kd,lock_pidB_irst,lock_pidB_freeze,lock_pidB_ifreeze,lock_pidC_sw,'+
+                       'lock_pidC_PSR,lock_pidC_ISR,lock_pidC_DSR,lock_pidC_SAT,lock_pidC_sp,lock_pidC_ofs,lock_pidC_kp,lock_pidC_ki,'+
+                       'lock_pidC_kd,lock_pidC_irst,lock_pidC_freeze,lock_pidC_ifreeze,lock_aux_A,lock_aux_B,lock_ctrl_aux_lock_now,lock_ctrl_aux_launch_lock_trig,'+
+                       'lock_ctrl_aux_pidC_enable_ctrl,lock_ctrl_aux_pidB_enable_ctrl,lock_ctrl_aux_pidA_enable_ctrl,lock_ctrl_aux_ramp_enable_ctrl,'+
+                       'lock_ctrl_aux_set_pidC_enable,lock_ctrl_aux_set_pidB_enable,lock_ctrl_aux_set_pidA_enable,lock_ctrl_aux_set_ramp_enable,'+
+                       'lock_ctrl_aux_trig_type,lock_ctrl_aux_lock_trig_rise,lock_mod_sq_on,lock_mod_harmonic_on';
 
   config_params_keys = config_params_txts.split(",");
 
@@ -1166,9 +1166,9 @@
     // Number inputs
     var input_number=['lock_lock_trig_val','lock_lock_trig_time_val','lock_rl_error_threshold','lock_rl_signal_threshold','lock_sf_jumpA', 
                       'lock_sf_jumpB','lock_sf_jumpC','lock_error_offset','lock_gen_mod_phase','lock_gen_mod_phase_sq','lock_gen_mod_hp', 
-                      'lock_gen_mod_sqp','lock_ramp_step','lock_ramp_low_lim','lock_ramp_hig_lim','lock_ramp_B_factor','lock_pidA_sp','lock_pidA_kp', 
-                      'lock_pidA_ki','lock_pidA_kd','lock_pidB_sp','lock_pidB_kp','lock_pidB_ki','lock_pidB_kd','lock_pidC_sp','lock_pidC_kp', 
-                      'lock_pidC_ki','lock_pidC_kd','lock_aux_A','lock_aux_B'];
+                      'lock_gen_mod_sqp','lock_ramp_step','lock_ramp_low_lim','lock_ramp_hig_lim','lock_ramp_B_factor','lock_pidA_sp','lock_pidA_ofs', 
+                      'lock_pidA_kp','lock_pidA_ki','lock_pidA_kd','lock_pidB_sp','lock_pidB_ofs','lock_pidB_kp','lock_pidB_ki','lock_pidB_kd', 
+                      'lock_pidC_sp','lock_pidC_ofs','lock_pidC_kp','lock_pidC_ki','lock_pidC_kd','lock_aux_A','lock_aux_B'];
 
     for(ii in input_number){
       $('#'+input_number[ii])
@@ -1316,15 +1316,15 @@
         //$(this).blur();
     });
 
-    $('#lock_pidA_sp,#lock_pidA_kp,#lock_pidA_ki,#lock_pidA_kd,#lock_pidA_ofs').on('input', function() {
+    $('#lock_pidA_sp,#lock_pidA_ofs,#lock_pidA_kp,#lock_pidA_ki,#lock_pidA_kd').on('input', function() {
         lock_pidA_update();
         //$(this).blur();
     });
-    $('#lock_pidB_sp,#lock_pidB_kp,#lock_pidB_ki,#lock_pidB_kd,#lock_pidB_ofs').on('input', function() {
+    $('#lock_pidB_sp,#lock_pidB_ofs,#lock_pidB_kp,#lock_pidB_ki,#lock_pidB_kd').on('input', function() {
         lock_pidB_update();
         //$(this).blur();
     });
-    $('#lock_pidC_sp,#lock_pidC_kp,#lock_pidC_ki,#lock_pidC_kd,#lock_pidC_ofs').on('input', function() {
+    $('#lock_pidC_sp,#lock_pidC_ofs,#lock_pidC_kp,#lock_pidC_ki,#lock_pidC_kd').on('input', function() {
         lock_pidC_update();
         //$(this).blur();
     });
@@ -1718,26 +1718,26 @@
   function lock_pidA_update(){
     // Get inputs text values
     lock_pidA_sp_arr = $("#lock_pidA_sp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
+    lock_pidA_ofs_arr = $("#lock_pidA_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidA_kp_arr = $("#lock_pidA_kp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidA_ki_arr = $("#lock_pidA_ki" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidA_kd_arr = $("#lock_pidA_kd" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
-    lock_pidA_ofs_arr = $("#lock_pidA_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
 
     // Check if inputs are numbers
-    if( !$.isNumeric(lock_pidA_sp_arr[0]) ||
-        !$.isNumeric(lock_pidA_kp_arr[0]) ||
-        !$.isNumeric(lock_pidA_ki_arr[0]) ||
-        !$.isNumeric(lock_pidA_kd_arr[0]) ||
-        !$.isNumeric(lock_pidA_ofs_arr[0])   ) return -1 ;
+    if( !$.isNumeric(lock_pidA_sp_arr[0])  ||
+        !$.isNumeric(lock_pidA_ofs_arr[0]) ||
+        !$.isNumeric(lock_pidA_kp_arr[0])  ||
+        !$.isNumeric(lock_pidA_ki_arr[0])  ||
+        !$.isNumeric(lock_pidA_kd_arr[0])    ) return -1 ;
 
     // Check if values changed from last execution. We don't want to update DIVs constantly but only
     // when there are changes (to save processor time / resources)
     if (params) if (params.local)
     if( parseInt(lock_pidA_sp_arr[0])         == pidA_sp &&
+        parseInt(lock_pidA_ofs_arr[0])        == pidA_ofs &&
         parseInt(lock_pidA_kp_arr[0])         == pidA_kp &&
         parseInt(lock_pidA_ki_arr[0])         == pidA_ki &&
         parseInt(lock_pidA_kd_arr[0])         == pidA_kd &&
-        parseInt(lock_pidA_ofs_arr[0])        == pidA_ofs &&
         parseInt(params.local.lock_pidA_PSR ) == parseInt($("#lock_pidA_PSR" ).val()) &&
         parseInt(params.local.lock_pidA_ISR ) == parseInt($("#lock_pidA_ISR" ).val()) &&
         parseInt(params.local.lock_pidA_DSR ) == parseInt($("#lock_pidA_DSR" ).val()) &&
@@ -1746,10 +1746,10 @@
 
     // Get number values
     pidA_sp = parseInt( lock_pidA_sp_arr[0] ) ;
+    pidA_ofs = parseInt( lock_pidA_ofs_arr[0] ) ;
     pidA_kp = parseInt( lock_pidA_kp_arr[0] ) ;
     pidA_ki = parseInt( lock_pidA_ki_arr[0] ) ;
     pidA_kd = parseInt( lock_pidA_kd_arr[0] ) ;
-    pidA_ofs = parseInt( lock_pidA_ofs_arr[0] ) ;
 
     // If there is a text that sets units, process the correct unit and number value
     if( lock_pidA_sp_arr.length === 2) {
@@ -1840,26 +1840,26 @@
   function lock_pidB_update(){
     // Get inputs text values
     lock_pidB_sp_arr = $("#lock_pidB_sp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
+    lock_pidB_ofs_arr = $("#lock_pidB_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidB_kp_arr = $("#lock_pidB_kp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidB_ki_arr = $("#lock_pidB_ki" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
     lock_pidB_kd_arr = $("#lock_pidB_kd" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
-    lock_pidB_ofs_arr = $("#lock_pidB_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
 
     // Check if inputs are numbers
-    if( !$.isNumeric(lock_pidB_sp_arr[0]) ||
-        !$.isNumeric(lock_pidB_kp_arr[0]) ||
-        !$.isNumeric(lock_pidB_ki_arr[0]) ||
-        !$.isNumeric(lock_pidB_kd_arr[0]) ||
-        !$.isNumeric(lock_pidB_ofs_arr[0])    ) return -1 ;
+    if( !$.isNumeric(lock_pidB_sp_arr[0])  ||
+        !$.isNumeric(lock_pidB_ofs_arr[0]) ||
+        !$.isNumeric(lock_pidB_kp_arr[0])  ||
+        !$.isNumeric(lock_pidB_ki_arr[0])  ||
+        !$.isNumeric(lock_pidB_kd_arr[0])     ) return -1 ;
 
     // Check if values changed from last execution. We don't want to update DIVs constantly but only
     // when there are changes (to save processor time / resources)
     if (params) if (params.local)
     if( parseInt(lock_pidB_sp_arr[0])         == pidB_sp &&
+        parseInt(lock_pidB_ofs_arr[0])        == pidB_ofs &&
         parseInt(lock_pidB_kp_arr[0])         == pidB_kp &&
         parseInt(lock_pidB_ki_arr[0])         == pidB_ki &&
         parseInt(lock_pidB_kd_arr[0])         == pidB_kd &&
-        parseInt(lock_pidB_ofs_arr[0])        == pidB_ofs &&
         parseInt(params.local.lock_pidB_PSR ) == parseInt($("#lock_pidB_PSR" ).val()) &&
         parseInt(params.local.lock_pidB_ISR ) == parseInt($("#lock_pidB_ISR" ).val()) &&
         parseInt(params.local.lock_pidB_DSR ) == parseInt($("#lock_pidB_DSR" ).val()) &&
@@ -1868,10 +1868,10 @@
 
     // Get number values
     pidB_sp = parseInt( lock_pidB_sp_arr[0] ) ;
+    pidB_ofs = parseInt( lock_pidB_ofs_arr[0] ) ;
     pidB_kp = parseInt( lock_pidB_kp_arr[0] ) ;
     pidB_ki = parseInt( lock_pidB_ki_arr[0] ) ;
     pidB_kd = parseInt( lock_pidB_kd_arr[0] ) ;
-    pidB_ofs = parseInt( lock_pidB_ofs_arr[0] ) ;
 
     // If there is a text that sets units, process the correct unit and number value
     if( lock_pidB_sp_arr.length === 2) {
@@ -1962,26 +1962,26 @@
 function lock_pidC_update(){
   // Get inputs text values
   lock_pidC_sp_arr = $("#lock_pidC_sp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
+  lock_pidC_ofs_arr = $("#lock_pidC_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
   lock_pidC_kp_arr = $("#lock_pidC_kp" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
   lock_pidC_ki_arr = $("#lock_pidC_ki" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
   lock_pidC_kd_arr = $("#lock_pidC_kd" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
-  lock_pidC_ofs_arr = $("#lock_pidC_ofs" ).val().trim().split(' ').filter( function(n,i){ return n!=="" } );
 
   // Check if inputs are numbers
-  if( !$.isNumeric(lock_pidC_sp_arr[0]) ||
-      !$.isNumeric(lock_pidC_kp_arr[0]) ||
-      !$.isNumeric(lock_pidC_ki_arr[0]) ||
-      !$.isNumeric(lock_pidC_kd_arr[0]) ||
-      !$.isNumeric(lock_pidC_ofs_arr[0])    ) return -1 ;
+  if( !$.isNumeric(lock_pidC_sp_arr[0])  ||
+      !$.isNumeric(lock_pidC_ofs_arr[0]) ||
+      !$.isNumeric(lock_pidC_kp_arr[0])  ||
+      !$.isNumeric(lock_pidC_ki_arr[0])  ||
+      !$.isNumeric(lock_pidC_kd_arr[0])     ) return -1 ;
 
   // Check if values changed from last execution. We don't want to update DIVs constantly but only
   // when there are changes (to save processor time / resources)
   if (params) if (params.local)
   if( parseInt(lock_pidC_sp_arr[0])         == pidC_sp &&
+      parseInt(lock_pidC_ofs_arr[0])        == pidC_ofs &&
       parseInt(lock_pidC_kp_arr[0])         == pidC_kp &&
       parseInt(lock_pidC_ki_arr[0])         == pidC_ki &&
       parseInt(lock_pidC_kd_arr[0])         == pidC_kd &&
-      parseInt(lock_pidC_ofs_arr[0])        == pidC_ofs &&
       parseInt(params.local.lock_pidC_PSR ) == parseInt($("#lock_pidC_PSR" ).val()) &&
       parseInt(params.local.lock_pidC_ISR ) == parseInt($("#lock_pidC_ISR" ).val()) &&
       parseInt(params.local.lock_pidC_DSR ) == parseInt($("#lock_pidC_DSR" ).val()) &&
@@ -1990,10 +1990,10 @@ function lock_pidC_update(){
 
   // Get number values
   pidC_sp = parseInt( lock_pidC_sp_arr[0] ) ;
+  pidC_ofs = parseInt( lock_pidC_ofs_arr[0] );
   pidC_kp = parseInt( lock_pidC_kp_arr[0] ) ;
   pidC_ki = parseInt( lock_pidC_ki_arr[0] ) ;
   pidC_kd = parseInt( lock_pidC_kd_arr[0] ) ;
-  pidC_ofs = parseInt( lock_pidC_ofs_arr[0] ) ;
 
   // If there is a text that sets units, process the correct unit and number value
   if( lock_pidC_sp_arr.length === 2) {
@@ -3126,14 +3126,17 @@ function lock_pidC_update(){
     $('#lock_ramp_hig_lim'       ).val(params.original.lock_ramp_hig_lim          );
     $('#lock_ramp_B_factor'      ).val(params.original.lock_ramp_B_factor         );
     $('#lock_pidA_sp'            ).val(params.original.lock_pidA_sp               );
+    $('#lock_pidA_ofs'           ).val(params.original.lock_pidA_ofs              );
     $('#lock_pidA_kp'            ).val(params.original.lock_pidA_kp               );
     $('#lock_pidA_ki'            ).val(params.original.lock_pidA_ki               );
     $('#lock_pidA_kd'            ).val(params.original.lock_pidA_kd               );
     $('#lock_pidB_sp'            ).val(params.original.lock_pidB_sp               );
+    $('#lock_pidB_ofs'           ).val(params.original.lock_pidB_ofs              );
     $('#lock_pidB_kp'            ).val(params.original.lock_pidB_kp               );
     $('#lock_pidB_ki'            ).val(params.original.lock_pidB_ki               );
     $('#lock_pidB_kd'            ).val(params.original.lock_pidB_kd               );
     $('#lock_pidC_sp'            ).val(params.original.lock_pidC_sp               );
+    $('#lock_pidC_ofs'           ).val(params.original.lock_pidC_ofs              );
     $('#lock_pidC_kp'            ).val(params.original.lock_pidC_kp               );
     $('#lock_pidC_ki'            ).val(params.original.lock_pidC_ki               );
     $('#lock_pidC_kd'            ).val(params.original.lock_pidC_kd               );

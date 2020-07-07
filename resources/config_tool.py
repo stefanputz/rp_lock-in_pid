@@ -130,7 +130,7 @@ f.add( name="sf_jumpA"           , group=grp , val=    0, rw=True ,  nbits=14, m
 f.add( name="sf_jumpB"           , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="Step function measure jump value for ctrl_B" )
 f.add( name="sf_jumpC"           , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="Step function measure jump value for ctrl_C" )
 #f.add( name="sf_jump"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="Step function measure jump value" )
-f.add( name="sf_config"          , group=grp , val=    0, rw=True ,  nbits= 5, min_val=          0, max_val=         31, fpga_update=True , signed=False, desc="Step function configuration. [pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] " )
+f.add( name="sf_config"          , group=grp , val=    0, rw=True ,  nbits= 7, min_val=          0, max_val=        127, fpga_update=True , signed=False, desc="Step function configuration. [pidC_ifreeze,pidC_freeze,pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] " )
 
 # Lock-in control
 grp='lock-in'
@@ -223,6 +223,7 @@ f.add( name="pidA_ISR"           , group=grp , val=    8, rw=True ,  nbits= 4, m
 f.add( name="pidA_DSR"           , group=grp , val=    0, rw=True ,  nbits= 3, min_val=          0, max_val=          5, fpga_update=True , signed=False, desc="pidA DSR" )
 f.add( name="pidA_SAT"           , group=grp , val=   13, rw=True ,  nbits=14, min_val=          0, max_val=         13, fpga_update=True , signed=False, desc="pidA saturation control" )
 f.add( name="pidA_sp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidA set_point" )
+f.add( name="pidA_ofs"           , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidA offset" )
 f.add( name="pidA_kp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidA proportional constant" )
 f.add( name="pidA_ki"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidA integral constant" )
 f.add( name="pidA_kd"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidA derivative constant" )
@@ -238,6 +239,7 @@ f.add( name="pidB_ISR"           , group=grp , val=    8, rw=True ,  nbits= 4, m
 f.add( name="pidB_DSR"           , group=grp , val=    0, rw=True ,  nbits= 3, min_val=          0, max_val=          5, fpga_update=True , signed=False, desc="pidB DSR" )
 f.add( name="pidB_SAT"           , group=grp , val=   13, rw=True ,  nbits=14, min_val=          0, max_val=         13, fpga_update=True , signed=False, desc="pidB saturation control" )
 f.add( name="pidB_sp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidB set_point" )
+f.add( name="pidB_ofs"           , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidB offset" )
 f.add( name="pidB_kp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidB proportional constant" )
 f.add( name="pidB_ki"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidB integral constant" )
 f.add( name="pidB_kd"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidB derivative constant" )
@@ -253,6 +255,7 @@ f.add( name="pidC_ISR"           , group=grp , val=    8, rw=True ,  nbits= 4, m
 f.add( name="pidC_DSR"           , group=grp , val=    0, rw=True ,  nbits= 3, min_val=          0, max_val=          5, fpga_update=True , signed=False, desc="pidC DSR" )
 f.add( name="pidC_SAT"           , group=grp , val=   13, rw=True ,  nbits=14, min_val=          0, max_val=         13, fpga_update=True , signed=False, desc="pidC saturation control" )
 f.add( name="pidC_sp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC set_point" )
+f.add( name="pidC_ofs"           , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC offset" )
 f.add( name="pidC_kp"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC proportional constant" )
 f.add( name="pidC_ki"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC integral constant" )
 f.add( name="pidC_kd"            , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC derivative constant" )
@@ -737,8 +740,10 @@ r=m["lock_sf_AfrzO"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 1 )& 0x0
 r=m["lock_sf_AfrzI"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 2 )& 0x01)'.format(r.fpga_reg)
 r=m["lock_sf_BfrzO"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 3 )& 0x01)'.format(r.fpga_reg)
 r=m["lock_sf_BfrzI"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 4 )& 0x01)'.format(r.fpga_reg)
-r=f["sf_config"            ]; r.c_update='(((int)params[{:s}].value) << 4 ) +(((int)params[{:s}].value) << 3 ) +(((int)params[{:s}].value) << 2 ) + (((int)params[{:s}].value) << 1 ) + ((int)params[{:s}].value)'.format(
-        m["lock_sf_BfrzI"].cdef , m["lock_sf_BfrzO"].cdef,m["lock_sf_AfrzI"].cdef , m["lock_sf_AfrzO"].cdef , m["lock_sf_start"].cdef )
+r=m["lock_sf_CfrzO"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 5 )& 0x01)'.format(r.fpga_reg)
+r=m["lock_sf_CfrzI"        ]; r.c_update='(float) ((g_lock_reg->{:s} >> 6 )& 0x01)'.format(r.fpga_reg)
+r=f["sf_config"            ]; r.c_update='(((int)params[{:s}].value) << 6 ) +(((int)params[{:s}].value) << 5 ) +(((int)params[{:s}].value) << 4 ) +(((int)params[{:s}].value) << 3 ) +(((int)params[{:s}].value) << 2 ) + (((int)params[{:s}].value) << 1 ) + ((int)params[{:s}].value)'.format(
+        m["lock_sf_CfrzI"].cdef , m["lock_sf_CfrzO"].cdef,m["lock_sf_BfrzI"].cdef , m["lock_sf_BfrzO"].cdef,m["lock_sf_AfrzI"].cdef , m["lock_sf_AfrzO"].cdef , m["lock_sf_start"].cdef )
 
 
 # group: lock-in
@@ -852,6 +857,7 @@ m.add( name="lock_pidA_ISR"      , fpga_reg="pidA_ISR"      , val=8    , rw=True
 m.add( name="lock_pidA_DSR"      , fpga_reg="pidA_DSR"      , val=0    , rw=True , nbits=3 , min_val=0         , max_val=5         , fpga_update=True , signed=False, group="pidA"           , desc="pidA DSR")
 m.add( name="lock_pidA_SAT"      , fpga_reg="pidA_SAT"      , val=13   , rw=True , nbits=14, min_val=0         , max_val=13        , fpga_update=True , signed=False, group="pidA"           , desc="pidA saturation control")
 m.add( name="lock_pidA_sp"       , fpga_reg="pidA_sp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidA"           , desc="pidA set_point")
+m.add( name="lock_pidA_ofs"      , fpga_reg="pidA_ofs"      , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidA"           , desc="pidA offset")
 m.add( name="lock_pidA_kp"       , fpga_reg="pidA_kp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidA"           , desc="pidA proportional constant")
 m.add( name="lock_pidA_ki"       , fpga_reg="pidA_ki"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidA"           , desc="pidA integral constant")
 m.add( name="lock_pidA_kd"       , fpga_reg="pidA_kd"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidA"           , desc="pidA derivative constant")
@@ -878,6 +884,7 @@ m.add( name="lock_pidB_ISR"      , fpga_reg="pidB_ISR"      , val=8    , rw=True
 m.add( name="lock_pidB_DSR"      , fpga_reg="pidB_DSR"      , val=0    , rw=True , nbits=3 , min_val=0         , max_val=5         , fpga_update=True , signed=False, group="pidB"           , desc="pidB DSR")
 m.add( name="lock_pidB_SAT"      , fpga_reg="pidB_SAT"      , val=13   , rw=True , nbits=14, min_val=0         , max_val=13        , fpga_update=True , signed=False, group="pidB"           , desc="pidB saturation control")
 m.add( name="lock_pidB_sp"       , fpga_reg="pidB_sp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidB"           , desc="pidB set_point")
+m.add( name="lock_pidB_ofs"      , fpga_reg="pidB_ofs"      , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidB"           , desc="pidB offset")
 m.add( name="lock_pidB_kp"       , fpga_reg="pidB_kp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidB"           , desc="pidB proportional constant")
 m.add( name="lock_pidB_ki"       , fpga_reg="pidB_ki"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidB"           , desc="pidB integral constant")
 m.add( name="lock_pidB_kd"       , fpga_reg="pidB_kd"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidB"           , desc="pidB derivative constant")
@@ -885,9 +892,9 @@ m.add( name="lock_pidB_in"       , fpga_reg="pidB_in"       , val=0    , rw=Fals
 m.add( name="lock_pidB_out"      , fpga_reg="pidB_out"      , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidB"           , desc="pidB output")
 
 if True:
-    m.add( name="lock_pidB_irst"     , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidB_irst")
-    m.add( name="lock_pidB_freeze"   , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidB_freeze")
-    m.add( name="lock_pidB_ifreeze"  , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidB_ifreeze")
+    m.add( name="lock_pidB_irst"     , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidB"           , desc="pidB_irst")
+    m.add( name="lock_pidB_freeze"   , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidB"           , desc="pidB_freeze")
+    m.add( name="lock_pidB_ifreeze"  , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidB"           , desc="pidB_ifreeze")
     r=m["lock_pidB_irst"   ]; r.c_update='(float) ((g_lock_reg->{:20s}      )& 0x001)'.format(r.fpga_reg)
     r=m["lock_pidB_freeze" ]; r.c_update='(float) ((g_lock_reg->{:20s} >>1  )& 0x001)'.format(r.fpga_reg)
     r=m["lock_pidB_ifreeze"]; r.c_update='(float) ((g_lock_reg->{:20s} >>2  )& 0x001)'.format(r.fpga_reg)
@@ -903,6 +910,7 @@ m.add( name="lock_pidC_ISR"      , fpga_reg="pidC_ISR"      , val=8    , rw=True
 m.add( name="lock_pidC_DSR"      , fpga_reg="pidC_DSR"      , val=0    , rw=True , nbits=3 , min_val=0         , max_val=5         , fpga_update=True , signed=False, group="pidC"           , desc="pidC DSR")
 m.add( name="lock_pidC_SAT"      , fpga_reg="pidC_SAT"      , val=13   , rw=True , nbits=14, min_val=0         , max_val=13        , fpga_update=True , signed=False, group="pidC"           , desc="pidC saturation control")
 m.add( name="lock_pidC_sp"       , fpga_reg="pidC_sp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidC"           , desc="pidC set_point")
+m.add( name="lock_pidC_ofs"      , fpga_reg="pidC_ofs"      , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidC"           , desc="pidC offset")
 m.add( name="lock_pidC_kp"       , fpga_reg="pidC_kp"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidC"           , desc="pidC proportional constant")
 m.add( name="lock_pidC_ki"       , fpga_reg="pidC_ki"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidC"           , desc="pidC integral constant")
 m.add( name="lock_pidC_kd"       , fpga_reg="pidC_kd"       , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="pidC"           , desc="pidC derivative constant")
@@ -910,16 +918,16 @@ m.add( name="lock_pidC_in"       , fpga_reg="pidC_in"       , val=0    , rw=Fals
 m.add( name="lock_pidC_out"      , fpga_reg="pidC_out"      , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidC"           , desc="pidC output")
 
 if True:
-    m.add( name="lock_pidC_irst"     , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidC_irst")
-    m.add( name="lock_pidC_freeze"   , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidC_freeze")
-    m.add( name="lock_pidC_ifreeze"  , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidA"           , desc="pidC_ifreeze")
+    m.add( name="lock_pidC_irst"     , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidC"           , desc="pidC_irst")
+    m.add( name="lock_pidC_freeze"   , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidC"           , desc="pidC_freeze")
+    m.add( name="lock_pidC_ifreeze"  , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=1 , min_val=0         , max_val=1         , fpga_update=True , signed=False, group="pidC"           , desc="pidC_ifreeze")
     r=m["lock_pidC_irst"   ]; r.c_update='(float) ((g_lock_reg->{:20s}      )& 0x001)'.format(r.fpga_reg)
     r=m["lock_pidC_freeze" ]; r.c_update='(float) ((g_lock_reg->{:20s} >>1  )& 0x001)'.format(r.fpga_reg)
     r=m["lock_pidC_ifreeze"]; r.c_update='(float) ((g_lock_reg->{:20s} >>2  )& 0x001)'.format(r.fpga_reg)
     r=f["pidC_ctrl"]; r.c_update='(((int)params[{:s}].value)<<2) + (((int)params[{:s}].value)<<1) + ((int)params[{:s}].value)'.format( m["lock_pidC_ifreeze"].cdef, m["lock_pidC_freeze"].cdef, m["lock_pidC_irst"].cdef)
 else:
     m.add( name="lock_pidC_ctrl"     , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=3 , min_val=0         , max_val=7         , fpga_update=True , signed=False, group="pidC"           , desc="pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]")
-m.add( name="lock_ctrl_C"        , fpga_reg="ctrl_C"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidC"           , desc="control_B: pidC_out + ramp_A")
+m.add( name="lock_ctrl_C"        , fpga_reg="ctrl_C"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidC"           , desc="control_C: pidC_out + ramp_A")
 
 # group: mix
 m.add( name="lock_aux_A"         , fpga_reg="aux_A"         , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="mix"            , desc="auxiliar value of 14 bits")
@@ -1348,6 +1356,8 @@ h['lock_sf_AfrzO'                 ].type = 'checkbox'
 h['lock_sf_AfrzI'                 ].type = 'checkbox'
 h['lock_sf_BfrzO'                 ].type = 'checkbox'
 h['lock_sf_BfrzI'                 ].type = 'checkbox'
+h['lock_sf_CfrzO'                 ].type = 'checkbox'
+h['lock_sf_CfrzI'                 ].type = 'checkbox'
 
 h['lock_signal_sw'                ].type = 'select'
 h['lock_sg_amp1'                  ].type = 'select'
@@ -1389,6 +1399,7 @@ h['lock_pidA_ISR'                 ].type = 'select'
 h['lock_pidA_DSR'                 ].type = 'select'
 h['lock_pidA_SAT'                 ].type = 'select'
 h['lock_pidA_sp'                  ].type = 'number'
+h['lock_pidA_ofs'                 ].type = 'number'
 h['lock_pidA_kp'                  ].type = 'number'
 h['lock_pidA_ki'                  ].type = 'number'
 h['lock_pidA_kd'                  ].type = 'number'
@@ -1403,6 +1414,7 @@ h['lock_pidB_ISR'                 ].type = 'select'
 h['lock_pidB_DSR'                 ].type = 'select'
 h['lock_pidB_SAT'                 ].type = 'select'
 h['lock_pidB_sp'                  ].type = 'number'
+h['lock_pidB_ofs'                 ].type = 'number'
 h['lock_pidB_kp'                  ].type = 'number'
 h['lock_pidB_ki'                  ].type = 'number'
 h['lock_pidB_kd'                  ].type = 'number'
@@ -1417,6 +1429,7 @@ h['lock_pidC_ISR'                 ].type = 'select'
 h['lock_pidC_DSR'                 ].type = 'select'
 h['lock_pidC_SAT'                 ].type = 'select'
 h['lock_pidC_sp'                  ].type = 'number'
+h['lock_pidC_ofs'                 ].type = 'number'
 h['lock_pidC_kp'                  ].type = 'number'
 h['lock_pidC_ki'                  ].type = 'number'
 h['lock_pidC_kd'                  ].type = 'number'
@@ -1654,6 +1667,8 @@ h['lock_sf_AfrzI'        ].control.text = 'A int'
 h['lock_sf_AfrzO'        ].control.text = 'A out'
 h['lock_sf_BfrzI'        ].control.text = 'B int'
 h['lock_sf_BfrzO'        ].control.text = 'B out'
+h['lock_sf_CfrzI'        ].control.text = 'C int'
+h['lock_sf_CfrzO'        ].control.text = 'C out'
 
 
 

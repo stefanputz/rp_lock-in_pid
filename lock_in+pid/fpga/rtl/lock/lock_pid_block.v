@@ -61,6 +61,7 @@ module lock_pid_block
 
    // settings
    input signed   [ 14-1: 0] set_sp_i        ,  // set point
+   input signed   [ 14-1: 0] set_ofs_i       ,  // offset
    input signed   [ 14-1: 0] set_kp_i        ,  // Kp
    input signed   [ 14-1: 0] set_ki_i        ,  // Ki
    input signed   [ 14-1: 0] set_kd_i        ,  // Kd
@@ -273,7 +274,7 @@ wire signed [   64-1: 0] pid_sum     ; // biggest posible bit-width
 //wire signed [   64-1: 0] pid_out     ;
 wire signed [   14-1: 0] pid_out     ;
 
-assign pid_sum = $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg) ;
+assign pid_sum = $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg) + $signed(set_ofs_i);
 
 //sat14 #(.RES(64)) i_sat14_pid_sum ( .in(pid_sum), .lim(64'd13), .out(pid_out) );
 satprotect #(.Ri(64),.Ro(14),.SAT(14)) i_satprotect_pid_sum ( .in(pid_sum), .out(pid_out) );

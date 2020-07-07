@@ -81,7 +81,7 @@ module lock(
     // lock_control --------------------------
     reg         [ 3-1:0] rl_signal_sw,rl_config;
     reg         [ 4-1:0] lock_trig_sw;
-    reg         [ 5-1:0] sf_config;
+    reg         [ 7-1:0] sf_config;
     reg         [13-1:0] lock_control,rl_error_threshold;
     reg         [32-1:0] lock_trig_time;
     reg  signed [14-1:0] lock_trig_val,rl_signal_threshold,sf_jumpA,sf_jumpB,sf_jumpC;
@@ -103,7 +103,7 @@ module lock(
     reg         [ 4-1:0] pidA_ISR;
     reg         [ 5-1:0] pidA_sw;
     reg         [14-1:0] pidA_SAT;
-    reg  signed [14-1:0] pidA_sp,pidA_kp,pidA_ki,pidA_kd;
+    reg  signed [14-1:0] pidA_sp,pidA_ofs,pidA_kp,pidA_ki,pidA_kd;
     wire signed [14-1:0] pidA_in,pidA_out,ctrl_A;
     
     // pidB --------------------------
@@ -111,7 +111,7 @@ module lock(
     reg         [ 4-1:0] pidB_ISR;
     reg         [ 5-1:0] pidB_sw;
     reg         [14-1:0] pidB_SAT;
-    reg  signed [14-1:0] pidB_sp,pidB_kp,pidB_ki,pidB_kd;
+    reg  signed [14-1:0] pidB_sp,pidB_ofs,pidB_kp,pidB_ki,pidB_kd;
     wire signed [14-1:0] pidB_in,pidB_out,ctrl_B;
     
     // pidC --------------------------
@@ -119,7 +119,7 @@ module lock(
     reg         [ 4-1:0] pidC_ISR;
     reg         [ 5-1:0] pidC_sw;
     reg         [14-1:0] pidC_SAT;
-    reg  signed [14-1:0] pidC_sp,pidC_kp,pidC_ki,pidC_kd;
+    reg  signed [14-1:0] pidC_sp,pidC_ofs,pidC_kp,pidC_ki,pidC_kd;
     wire signed [14-1:0] pidC_in,pidC_out,ctrl_C;
     
     // product_signals --------------------------
@@ -1152,6 +1152,7 @@ module lock(
       .DSR          (  pidA_DSR     ),
 
       .set_sp_i     (  pidA_sp      ),  // set point
+      .set_ofs_i    (  pidA_ofs      ),  // offset
       .set_kp_i     (  pidA_kp      ),  // Kp
       .set_ki_i     (  pidA_ki      ),  // Ki
       .set_kd_i     (  pidA_kd      ),  // Kd
@@ -1201,6 +1202,7 @@ module lock(
       .DSR          (  pidB_DSR     ),
 
       .set_sp_i     (  pidB_sp      ),  // set point
+      .set_ofs_i    (  pidB_ofs     ),  // offset
       .set_kp_i     (  pidB_kp      ),  // Kp
       .set_ki_i     (  pidB_ki      ),  // Ki
       .set_kd_i     (  pidB_kd      ),  // Kd
@@ -1231,8 +1233,8 @@ module lock(
     );
 
     wire   pidC_freeze_sf,pidC_ifreeze_sf;
-    assign pidC_freeze_sf  = sf_config[3] & jump_started ;
-    assign pidC_ifreeze_sf = sf_config[4] & jump_started ;
+    assign pidC_freeze_sf  = sf_config[5] & jump_started ;
+    assign pidC_ifreeze_sf = sf_config[6] & jump_started ;
 
     lock_pid_block i_lock_pid_block_C (
        // data
@@ -1251,6 +1253,7 @@ module lock(
       .DSR          (  pidC_DSR     ),
 
       .set_sp_i     (  pidC_sp      ),  // set point
+      .set_ofs_i    (  pidC_ofs     ),  // offset
       .set_kp_i     (  pidC_kp      ),  // Kp
       .set_ki_i     (  pidC_ki      ),  // Ki
       .set_kd_i     (  pidC_kd      ),  // Kd
@@ -1295,7 +1298,7 @@ module lock(
         sf_jumpA               <=  14'd0     ; // Step function measure jump value for ctrl_A
         sf_jumpB               <=  14'd0     ; // Step function measure jump value for ctrl_B
         sf_jumpC               <=  14'd0     ; // Step function measure jump value for ctrl_C
-        sf_config              <=   5'd0     ; // Step function configuration. [pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
+        sf_config              <=   7'd0     ; // Step function configuration. [pidC_ifreeze,pidC_freeze,pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
         signal_sw              <=   4'd0     ; // Input selector for signal_i
         sg_amp1                <=   4'd0     ; // amplification of Xo, Yo and F1o
         sg_amp2                <=   4'd0     ; // amplification of F2o
@@ -1325,6 +1328,7 @@ module lock(
         pidA_DSR               <=   3'd0     ; // pidA DSR
         pidA_SAT               <=  14'd13    ; // pidA saturation control
         pidA_sp                <=  14'd0     ; // pidA set_point
+        pidA_ofs               <=  14'd0     ; // pidA offset
         pidA_kp                <=  14'd0     ; // pidA proportional constant
         pidA_ki                <=  14'd0     ; // pidA integral constant
         pidA_kd                <=  14'd0     ; // pidA derivative constant
@@ -1335,6 +1339,7 @@ module lock(
         pidB_DSR               <=   3'd0     ; // pidB DSR
         pidB_SAT               <=  14'd13    ; // pidB saturation control
         pidB_sp                <=  14'd0     ; // pidB set_point
+        pidB_ofs               <=  14'd0     ; // pidB offset
         pidB_kp                <=  14'd0     ; // pidB proportional constant
         pidB_ki                <=  14'd0     ; // pidB integral constant
         pidB_kd                <=  14'd0     ; // pidB derivative constant
@@ -1345,6 +1350,7 @@ module lock(
         pidC_DSR               <=   3'd0     ; // pidC DSR
         pidC_SAT               <=  14'd13    ; // pidC saturation control
         pidC_sp                <=  14'd0     ; // pidC set_point
+        pidC_ofs               <=  14'd0     ; // pidC offset
         pidC_kp                <=  14'd0     ; // pidC proportional constant
         pidC_ki                <=  14'd0     ; // pidC integral constant
         pidC_kd                <=  14'd0     ; // pidC derivative constant
@@ -1376,7 +1382,7 @@ module lock(
             if (sys_addr[19:0]==20'h00050)  sf_jumpA              <=  sys_wdata[14-1: 0] ; // Step function measure jump value for ctrl_A
             if (sys_addr[19:0]==20'h00054)  sf_jumpB              <=  sys_wdata[14-1: 0] ; // Step function measure jump value for ctrl_B
             if (sys_addr[19:0]==20'h00058)  sf_jumpC              <=  sys_wdata[14-1: 0] ; // Step function measure jump value for ctrl_C
-            if (sys_addr[19:0]==20'h0005C)  sf_config             <=  sys_wdata[ 5-1: 0] ; // Step function configuration. [pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
+            if (sys_addr[19:0]==20'h0005C)  sf_config             <=  sys_wdata[ 7-1: 0] ; // Step function configuration. [pidC_ifreeze,pidC_freeze,pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
             if (sys_addr[19:0]==20'h00060)  signal_sw             <=  sys_wdata[ 4-1: 0] ; // Input selector for signal_i
           //if (sys_addr[19:0]==20'h00064)  signal_i              <=  sys_wdata[14-1: 0] ; // signal for demodulation
             if (sys_addr[19:0]==20'h00068)  sg_amp1               <=  sys_wdata[ 4-1: 0] ; // amplification of Xo, Yo and F1o
@@ -1443,41 +1449,44 @@ module lock(
             if (sys_addr[19:0]==20'h0015C)  pidA_DSR              <=  sys_wdata[ 3-1: 0] ; // pidA DSR
             if (sys_addr[19:0]==20'h00160)  pidA_SAT              <=  sys_wdata[14-1: 0] ; // pidA saturation control
             if (sys_addr[19:0]==20'h00164)  pidA_sp               <=  sys_wdata[14-1: 0] ; // pidA set_point
-            if (sys_addr[19:0]==20'h00168)  pidA_kp               <=  sys_wdata[14-1: 0] ; // pidA proportional constant
-            if (sys_addr[19:0]==20'h0016C)  pidA_ki               <=  sys_wdata[14-1: 0] ; // pidA integral constant
-            if (sys_addr[19:0]==20'h00170)  pidA_kd               <=  sys_wdata[14-1: 0] ; // pidA derivative constant
-          //if (sys_addr[19:0]==20'h00174)  pidA_in               <=  sys_wdata[14-1: 0] ; // pidA input
-          //if (sys_addr[19:0]==20'h00178)  pidA_out              <=  sys_wdata[14-1: 0] ; // pidA output
-            if (sys_addr[19:0]==20'h0017C)  pidA_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h00180)  ctrl_A                <=  sys_wdata[14-1: 0] ; // control_A: pidA_out + ramp_A
-            if (sys_addr[19:0]==20'h00184)  pidB_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidB input
-            if (sys_addr[19:0]==20'h00188)  pidB_PSR              <=  sys_wdata[ 3-1: 0] ; // pidB PSR
-            if (sys_addr[19:0]==20'h0018C)  pidB_ISR              <=  sys_wdata[ 4-1: 0] ; // pidB ISR
-            if (sys_addr[19:0]==20'h00190)  pidB_DSR              <=  sys_wdata[ 3-1: 0] ; // pidB DSR
-            if (sys_addr[19:0]==20'h00194)  pidB_SAT              <=  sys_wdata[14-1: 0] ; // pidB saturation control
-            if (sys_addr[19:0]==20'h00198)  pidB_sp               <=  sys_wdata[14-1: 0] ; // pidB set_point
-            if (sys_addr[19:0]==20'h0019C)  pidB_kp               <=  sys_wdata[14-1: 0] ; // pidB proportional constant
-            if (sys_addr[19:0]==20'h001A0)  pidB_ki               <=  sys_wdata[14-1: 0] ; // pidB integral constant
-            if (sys_addr[19:0]==20'h001A4)  pidB_kd               <=  sys_wdata[14-1: 0] ; // pidB derivative constant
-          //if (sys_addr[19:0]==20'h001A8)  pidB_in               <=  sys_wdata[14-1: 0] ; // pidB input
-          //if (sys_addr[19:0]==20'h001AC)  pidB_out              <=  sys_wdata[14-1: 0] ; // pidB output
-            if (sys_addr[19:0]==20'h001B0)  pidB_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h001B4)  ctrl_B                <=  sys_wdata[14-1: 0] ; // control_B: pidB_out + ramp_B
-            if (sys_addr[19:0]==20'h001B8)  pidC_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidC input
-            if (sys_addr[19:0]==20'h001BC)  pidC_PSR              <=  sys_wdata[ 3-1: 0] ; // pidC PSR
-            if (sys_addr[19:0]==20'h001C0)  pidC_ISR              <=  sys_wdata[ 4-1: 0] ; // pidC ISR
-            if (sys_addr[19:0]==20'h001C4)  pidC_DSR              <=  sys_wdata[ 3-1: 0] ; // pidC DSR
-            if (sys_addr[19:0]==20'h001C8)  pidC_SAT              <=  sys_wdata[14-1: 0] ; // pidC saturation control
-            if (sys_addr[19:0]==20'h001CC)  pidC_sp               <=  sys_wdata[14-1: 0] ; // pidC set_point
-            if (sys_addr[19:0]==20'h001D0)  pidC_kp               <=  sys_wdata[14-1: 0] ; // pidC proportional constant
-            if (sys_addr[19:0]==20'h001D4)  pidC_ki               <=  sys_wdata[14-1: 0] ; // pidC integral constant
-            if (sys_addr[19:0]==20'h001D8)  pidC_kd               <=  sys_wdata[14-1: 0] ; // pidC derivative constant
-          //if (sys_addr[19:0]==20'h001DC)  pidC_in               <=  sys_wdata[14-1: 0] ; // pidC input
-          //if (sys_addr[19:0]==20'h001E0)  pidC_out              <=  sys_wdata[14-1: 0] ; // pidC output
-            if (sys_addr[19:0]==20'h001E4)  pidC_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h001E8)  ctrl_C                <=  sys_wdata[14-1: 0] ; // control_C: pidC_out + ramp_A
-            if (sys_addr[19:0]==20'h001EC)  aux_A                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
-            if (sys_addr[19:0]==20'h001F0)  aux_B                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
+            if (sys_addr[19:0]==20'h00168)  pidA_ofs              <=  sys_wdata[14-1: 0] ; // pidA offset
+            if (sys_addr[19:0]==20'h0016C)  pidA_kp               <=  sys_wdata[14-1: 0] ; // pidA proportional constant
+            if (sys_addr[19:0]==20'h00170)  pidA_ki               <=  sys_wdata[14-1: 0] ; // pidA integral constant
+            if (sys_addr[19:0]==20'h00174)  pidA_kd               <=  sys_wdata[14-1: 0] ; // pidA derivative constant
+          //if (sys_addr[19:0]==20'h00178)  pidA_in               <=  sys_wdata[14-1: 0] ; // pidA input
+          //if (sys_addr[19:0]==20'h0017C)  pidA_out              <=  sys_wdata[14-1: 0] ; // pidA output
+            if (sys_addr[19:0]==20'h00180)  pidA_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h00184)  ctrl_A                <=  sys_wdata[14-1: 0] ; // control_A: pidA_out + ramp_A
+            if (sys_addr[19:0]==20'h00188)  pidB_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidB input
+            if (sys_addr[19:0]==20'h0018C)  pidB_PSR              <=  sys_wdata[ 3-1: 0] ; // pidB PSR
+            if (sys_addr[19:0]==20'h00190)  pidB_ISR              <=  sys_wdata[ 4-1: 0] ; // pidB ISR
+            if (sys_addr[19:0]==20'h00194)  pidB_DSR              <=  sys_wdata[ 3-1: 0] ; // pidB DSR
+            if (sys_addr[19:0]==20'h00198)  pidB_SAT              <=  sys_wdata[14-1: 0] ; // pidB saturation control
+            if (sys_addr[19:0]==20'h0019C)  pidB_sp               <=  sys_wdata[14-1: 0] ; // pidB set_point
+            if (sys_addr[19:0]==20'h001A0)  pidB_ofs              <=  sys_wdata[14-1: 0] ; // pidB offset
+            if (sys_addr[19:0]==20'h001A4)  pidB_kp               <=  sys_wdata[14-1: 0] ; // pidB proportional constant
+            if (sys_addr[19:0]==20'h001A8)  pidB_ki               <=  sys_wdata[14-1: 0] ; // pidB integral constant
+            if (sys_addr[19:0]==20'h001AC)  pidB_kd               <=  sys_wdata[14-1: 0] ; // pidB derivative constant
+          //if (sys_addr[19:0]==20'h001B0)  pidB_in               <=  sys_wdata[14-1: 0] ; // pidB input
+          //if (sys_addr[19:0]==20'h001B4)  pidB_out              <=  sys_wdata[14-1: 0] ; // pidB output
+            if (sys_addr[19:0]==20'h001B8)  pidB_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h001BC)  ctrl_B                <=  sys_wdata[14-1: 0] ; // control_B: pidB_out + ramp_B
+            if (sys_addr[19:0]==20'h001C0)  pidC_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidC input
+            if (sys_addr[19:0]==20'h001C4)  pidC_PSR              <=  sys_wdata[ 3-1: 0] ; // pidC PSR
+            if (sys_addr[19:0]==20'h001C8)  pidC_ISR              <=  sys_wdata[ 4-1: 0] ; // pidC ISR
+            if (sys_addr[19:0]==20'h001CC)  pidC_DSR              <=  sys_wdata[ 3-1: 0] ; // pidC DSR
+            if (sys_addr[19:0]==20'h001D0)  pidC_SAT              <=  sys_wdata[14-1: 0] ; // pidC saturation control
+            if (sys_addr[19:0]==20'h001D4)  pidC_sp               <=  sys_wdata[14-1: 0] ; // pidC set_point
+            if (sys_addr[19:0]==20'h001D8)  pidC_ofs              <=  sys_wdata[14-1: 0] ; // pidC offset
+            if (sys_addr[19:0]==20'h001DC)  pidC_kp               <=  sys_wdata[14-1: 0] ; // pidC proportional constant
+            if (sys_addr[19:0]==20'h001E0)  pidC_ki               <=  sys_wdata[14-1: 0] ; // pidC integral constant
+            if (sys_addr[19:0]==20'h001E4)  pidC_kd               <=  sys_wdata[14-1: 0] ; // pidC derivative constant
+          //if (sys_addr[19:0]==20'h001E8)  pidC_in               <=  sys_wdata[14-1: 0] ; // pidC input
+          //if (sys_addr[19:0]==20'h001EC)  pidC_out              <=  sys_wdata[14-1: 0] ; // pidC output
+            if (sys_addr[19:0]==20'h001F0)  pidC_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h001F4)  ctrl_C                <=  sys_wdata[14-1: 0] ; // control_C: pidC_out + ramp_A
+            if (sys_addr[19:0]==20'h001F8)  aux_A                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
+            if (sys_addr[19:0]==20'h001FC)  aux_B                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
         end
     end
     //---------------------------------------------------------------------------------
@@ -1516,7 +1525,7 @@ module lock(
             20'h00050 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sf_jumpA[13]}}      ,         sf_jumpA  }; end // Step function measure jump value for ctrl_A
             20'h00054 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sf_jumpB[13]}}      ,         sf_jumpB  }; end // Step function measure jump value for ctrl_B
             20'h00058 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sf_jumpC[13]}}      ,         sf_jumpC  }; end // Step function measure jump value for ctrl_C
-            20'h0005C : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,        sf_config  }; end // Step function configuration. [pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
+            20'h0005C : begin sys_ack <= sys_en;  sys_rdata <= {  25'b0                   ,        sf_config  }; end // Step function configuration. [pidC_ifreeze,pidC_freeze,pidB_ifreeze,pidB_freeze,pidA_ifreeze,pidA_freeze,start] 
             20'h00060 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,        signal_sw  }; end // Input selector for signal_i
             20'h00064 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{signal_i[13]}}      ,         signal_i  }; end // signal for demodulation
             20'h00068 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,          sg_amp1  }; end // amplification of Xo, Yo and F1o
@@ -1583,41 +1592,44 @@ module lock(
             20'h0015C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidA_DSR  }; end // pidA DSR
             20'h00160 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidA_SAT  }; end // pidA saturation control
             20'h00164 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_sp[13]}}       ,          pidA_sp  }; end // pidA set_point
-            20'h00168 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kp[13]}}       ,          pidA_kp  }; end // pidA proportional constant
-            20'h0016C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ki[13]}}       ,          pidA_ki  }; end // pidA integral constant
-            20'h00170 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kd[13]}}       ,          pidA_kd  }; end // pidA derivative constant
-            20'h00174 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_in[13]}}       ,          pidA_in  }; end // pidA input
-            20'h00178 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_out[13]}}      ,         pidA_out  }; end // pidA output
-            20'h0017C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidA_ctrl  }; end // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
-            20'h00180 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_A_reg[13]}}    ,       ctrl_A_reg  }; end // control_A: pidA_out + ramp_A
-            20'h00184 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidB_sw  }; end // switch selector for pidB input
-            20'h00188 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_PSR  }; end // pidB PSR
-            20'h0018C : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidB_ISR  }; end // pidB ISR
-            20'h00190 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_DSR  }; end // pidB DSR
-            20'h00194 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidB_SAT  }; end // pidB saturation control
-            20'h00198 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_sp[13]}}       ,          pidB_sp  }; end // pidB set_point
-            20'h0019C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kp[13]}}       ,          pidB_kp  }; end // pidB proportional constant
-            20'h001A0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ki[13]}}       ,          pidB_ki  }; end // pidB integral constant
-            20'h001A4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kd[13]}}       ,          pidB_kd  }; end // pidB derivative constant
-            20'h001A8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_in[13]}}       ,          pidB_in  }; end // pidB input
-            20'h001AC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_out[13]}}      ,         pidB_out  }; end // pidB output
-            20'h001B0 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidB_ctrl  }; end // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
-            20'h001B4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_B_reg[13]}}    ,       ctrl_B_reg  }; end // control_B: pidB_out + ramp_B
-            20'h001B8 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidC_sw  }; end // switch selector for pidC input
-            20'h001BC : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_PSR  }; end // pidC PSR
-            20'h001C0 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidC_ISR  }; end // pidC ISR
-            20'h001C4 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_DSR  }; end // pidC DSR
-            20'h001C8 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidC_SAT  }; end // pidC saturation control
-            20'h001CC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_sp[13]}}       ,          pidC_sp  }; end // pidC set_point
-            20'h001D0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kp[13]}}       ,          pidC_kp  }; end // pidC proportional constant
-            20'h001D4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ki[13]}}       ,          pidC_ki  }; end // pidC integral constant
-            20'h001D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kd[13]}}       ,          pidC_kd  }; end // pidC derivative constant
-            20'h001DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_in[13]}}       ,          pidC_in  }; end // pidC input
-            20'h001E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_out[13]}}      ,         pidC_out  }; end // pidC output
-            20'h001E4 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidC_ctrl  }; end // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
-            20'h001E8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_C_reg[13]}}    ,       ctrl_C_reg  }; end // control_C: pidC_out + ramp_A
-            20'h001EC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_A[13]}}         ,            aux_A  }; end // auxiliar value of 14 bits
-            20'h001F0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_B[13]}}         ,            aux_B  }; end // auxiliar value of 14 bits
+            20'h00168 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ofs[13]}}      ,         pidA_ofs  }; end // pidA offset
+            20'h0016C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kp[13]}}       ,          pidA_kp  }; end // pidA proportional constant
+            20'h00170 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ki[13]}}       ,          pidA_ki  }; end // pidA integral constant
+            20'h00174 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kd[13]}}       ,          pidA_kd  }; end // pidA derivative constant
+            20'h00178 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_in[13]}}       ,          pidA_in  }; end // pidA input
+            20'h0017C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_out[13]}}      ,         pidA_out  }; end // pidA output
+            20'h00180 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidA_ctrl  }; end // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
+            20'h00184 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_A_reg[13]}}    ,       ctrl_A_reg  }; end // control_A: pidA_out + ramp_A
+            20'h00188 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidB_sw  }; end // switch selector for pidB input
+            20'h0018C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_PSR  }; end // pidB PSR
+            20'h00190 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidB_ISR  }; end // pidB ISR
+            20'h00194 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_DSR  }; end // pidB DSR
+            20'h00198 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidB_SAT  }; end // pidB saturation control
+            20'h0019C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_sp[13]}}       ,          pidB_sp  }; end // pidB set_point
+            20'h001A0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ofs[13]}}      ,         pidB_ofs  }; end // pidB offset
+            20'h001A4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kp[13]}}       ,          pidB_kp  }; end // pidB proportional constant
+            20'h001A8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ki[13]}}       ,          pidB_ki  }; end // pidB integral constant
+            20'h001AC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kd[13]}}       ,          pidB_kd  }; end // pidB derivative constant
+            20'h001B0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_in[13]}}       ,          pidB_in  }; end // pidB input
+            20'h001B4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_out[13]}}      ,         pidB_out  }; end // pidB output
+            20'h001B8 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidB_ctrl  }; end // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
+            20'h001BC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_B_reg[13]}}    ,       ctrl_B_reg  }; end // control_B: pidB_out + ramp_B
+            20'h001C0 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidC_sw  }; end // switch selector for pidC input
+            20'h001C4 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_PSR  }; end // pidC PSR
+            20'h001C8 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidC_ISR  }; end // pidC ISR
+            20'h001CC : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_DSR  }; end // pidC DSR
+            20'h001D0 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidC_SAT  }; end // pidC saturation control
+            20'h001D4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_sp[13]}}       ,          pidC_sp  }; end // pidC set_point
+            20'h001D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ofs[13]}}      ,         pidC_ofs  }; end // pidC offset
+            20'h001DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kp[13]}}       ,          pidC_kp  }; end // pidC proportional constant
+            20'h001E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ki[13]}}       ,          pidC_ki  }; end // pidC integral constant
+            20'h001E4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kd[13]}}       ,          pidC_kd  }; end // pidC derivative constant
+            20'h001E8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_in[13]}}       ,          pidC_in  }; end // pidC input
+            20'h001EC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_out[13]}}      ,         pidC_out  }; end // pidC output
+            20'h001F0 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidC_ctrl  }; end // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
+            20'h001F4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_C_reg[13]}}    ,       ctrl_C_reg  }; end // control_C: pidC_out + ramp_A
+            20'h001F8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_A[13]}}         ,            aux_A  }; end // auxiliar value of 14 bits
+            20'h001FC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_B[13]}}         ,            aux_B  }; end // auxiliar value of 14 bits
             default   : begin sys_ack <= sys_en;  sys_rdata <=  32'h0        ; end
         endcase
     end

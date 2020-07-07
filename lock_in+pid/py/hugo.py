@@ -265,7 +265,7 @@ li.add( fpga_reg(name='rl_config'          , index= 18, rw=True , nbits= 3,signe
 li.add( fpga_reg(name='rl_state'           , index= 19, rw=False, nbits= 5,signed=False) )
 li.add( fpga_reg(name='sf_jumpA'           , index= 20, rw=True , nbits=14,signed=True ) )
 li.add( fpga_reg(name='sf_jumpB'           , index= 21, rw=True , nbits=14,signed=True ) )
-li.add( fpga_reg(name='sf_config'          , index= 22, rw=True , nbits= 5,signed=False) )
+li.add( fpga_reg(name='sf_config'          , index= 22, rw=True , nbits= 7,signed=False) )
 li.add( fpga_reg(name='signal_sw'          , index= 23, rw=True , nbits= 4,signed=False) )
 li.add( fpga_reg(name='signal_i'           , index= 24, rw=False, nbits=14,signed=True ) )
 li.add( fpga_reg(name='sg_amp1'            , index= 25, rw=True , nbits= 4,signed=False) )

@@ -406,6 +406,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_pidA_DSR"                 ,      0, 1, 0,            0,            5 }, /** pidA DSR **/
     { "lock_pidA_SAT"                 ,     13, 1, 0,            0,           13 }, /** pidA saturation control **/
     { "lock_pidA_sp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidA set_point **/
+    { "lock_pidA_ofs"                 ,      0, 1, 0,        -8192,         8191 }, /** pidA offset **/
     { "lock_pidA_kp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidA proportional constant **/
     { "lock_pidA_ki"                  ,      0, 1, 0,        -8192,         8191 }, /** pidA integral constant **/
     { "lock_pidA_kd"                  ,      0, 1, 0,        -8192,         8191 }, /** pidA derivative constant **/
@@ -421,6 +422,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_pidB_DSR"                 ,      0, 1, 0,            0,            5 }, /** pidB DSR **/
     { "lock_pidB_SAT"                 ,     13, 1, 0,            0,           13 }, /** pidB saturation control **/
     { "lock_pidB_sp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidB set_point **/
+    { "lock_pidB_ofs"                 ,      0, 1, 0,        -8192,         8191 }, /** pidB offset **/
     { "lock_pidB_kp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidB proportional constant **/
     { "lock_pidB_ki"                  ,      0, 1, 0,        -8192,         8191 }, /** pidB integral constant **/
     { "lock_pidB_kd"                  ,      0, 1, 0,        -8192,         8191 }, /** pidB derivative constant **/
@@ -436,6 +438,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_pidC_DSR"                 ,      0, 1, 0,            0,            5 }, /** pidC DSR **/
     { "lock_pidC_SAT"                 ,     13, 1, 0,            0,           13 }, /** pidC saturation control **/
     { "lock_pidC_sp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidC set_point **/
+    { "lock_pidC_ofs"                 ,      0, 1, 0,        -8192,         8191 }, /** pidC offset **/
     { "lock_pidC_kp"                  ,      0, 1, 0,        -8192,         8191 }, /** pidC proportional constant **/
     { "lock_pidC_ki"                  ,      0, 1, 0,        -8192,         8191 }, /** pidC integral constant **/
     { "lock_pidC_kd"                  ,      0, 1, 0,        -8192,         8191 }, /** pidC derivative constant **/
@@ -444,7 +447,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_pidC_irst"                ,      0, 1, 0,            0,            1 }, /** pidC_irst **/
     { "lock_pidC_freeze"              ,      0, 1, 0,            0,            1 }, /** pidC_freeze **/
     { "lock_pidC_ifreeze"             ,      0, 1, 0,            0,            1 }, /** pidC_ifreeze **/
-    { "lock_ctrl_C"                   ,      0, 0, 1,        -8192,         8191 }, /** control_B: pidC_out + ramp_A **/
+    { "lock_ctrl_C"                   ,      0, 0, 1,        -8192,         8191 }, /** control_C: pidC_out + ramp_A **/
     { "lock_aux_A"                    ,      0, 1, 0,        -8192,         8191 }, /** auxiliar value of 14 bits **/
     { "lock_aux_B"                    ,      0, 1, 0,        -8192,         8191 }, /** auxiliar value of 14 bits **/
     { "lock_ctrl_aux_lock_now"        ,      0, 0, 0,            0,            1 }, /** todo **/
