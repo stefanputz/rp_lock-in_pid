@@ -1,9 +1,9 @@
 # Red Pitaya Lock-in+PID Application
-
-## Updated from original version with one PID added
+```diff
+- Updated from original version with one PID added
 - PIDA, PIDB and PIDC outputs are possbile inputs for PID's, all PID outputs have arbitrary offsets pm 1 V under more options
 - only slow outputs 3 and 4 working
-
+```
 ## Lock-in and PID application for RedPitaya enviroment
 
 This is an application build for the [Red Pitaya STEMlab 125-14](https://www.redpitaya.com/) board (RP).
