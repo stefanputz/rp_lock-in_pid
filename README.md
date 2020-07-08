@@ -2,7 +2,7 @@
 ```diff
 - Updated from original version with one PID added
 - PIDA, PIDB and PIDC outputs are possbile inputs for PID's, all PID outputs have arbitrary offsets pm 1 V under more options
-- only slow outputs 3 and 4 working
+- only slow outputs 3 and 4 working!
 ```
 ## Lock-in and PID application for RedPitaya enviroment
 
