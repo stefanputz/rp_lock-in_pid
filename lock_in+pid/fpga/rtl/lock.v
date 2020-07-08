@@ -64,7 +64,7 @@ module lock(
     reg                  ramp_reset,ramp_enable,ramp_direction;
     reg         [32-1:0] ramp_step;
     reg  signed [14-1:0] ramp_low_lim,ramp_hig_lim,ramp_B_factor;
-    wire signed [14-1:0] ramp_A,ramp_B;
+    wire signed [14-1:0] ramp_A,ramp_B,ramp_C;
     
     // inout --------------------------
     wire        [12-1:0] slow_out1,slow_out2,slow_out3,slow_out4;
@@ -255,7 +255,7 @@ module lock(
     assign pidB_plus_ramp = $signed(pidB_out) + $signed(ramp_B)  + $signed(sf_jumpB_val) ;
     satprotect #(.Ri(16),.Ro(14),.SAT(14)) i_satprotect_ctrl_B  ( .in(pidB_plus_ramp),  .out(ctrl_B) );
 
-    assign pidC_plus_ramp = $signed(pidC_out) + $signed(ramp_A)  + $signed(sf_jumpC_val) ;
+    assign pidC_plus_ramp = $signed(pidC_out) + $signed(ramp_C)  + $signed(sf_jumpC_val) ;
     satprotect #(.Ri(16),.Ro(14),.SAT(14)) i_satprotect_ctrl_C  ( .in(pidC_plus_ramp),  .out(ctrl_C) );
 
 
@@ -698,7 +698,8 @@ module lock(
         .trigger_low   ( ramp_floor_trig ),
         .trigger_hig   ( ramp_ceil_trig  ),
         .outA          ( ramp_A          ),
-        .outB          ( ramp_B          )
+        .outB          ( ramp_B          ),
+        .outC          ( ramp_C          )
     );
 
 
@@ -1404,89 +1405,90 @@ module lock(
             if (sys_addr[19:0]==20'h000A8)  gen_mod_sqp           <=  sys_wdata[32-1: 0] ; // square signal period
           //if (sys_addr[19:0]==20'h000AC)  ramp_A                <=  sys_wdata[14-1: 0] ; // ramp signal A
           //if (sys_addr[19:0]==20'h000B0)  ramp_B                <=  sys_wdata[14-1: 0] ; // ramp signal B
-            if (sys_addr[19:0]==20'h000B4)  ramp_step             <=  sys_wdata[32-1: 0] ; // period of the triangular ramp signal
-            if (sys_addr[19:0]==20'h000B8)  ramp_low_lim          <=  sys_wdata[14-1: 0] ; // ramp low limit
-            if (sys_addr[19:0]==20'h000BC)  ramp_hig_lim          <=  sys_wdata[14-1: 0] ; // ramp high limit
-            if (sys_addr[19:0]==20'h000C0)  ramp_reset            <= |sys_wdata[32-1: 0] ; // ramp reset config
-            if (sys_addr[19:0]==20'h000C4)  ramp_enable           <= |sys_wdata[32-1: 0] ; // ramp enable/disable switch
-            if (sys_addr[19:0]==20'h000C8)  ramp_direction        <= |sys_wdata[32-1: 0] ; // ramp starting direction (up/down)
-            if (sys_addr[19:0]==20'h000CC)  ramp_B_factor         <=  sys_wdata[14-1: 0] ; // proportional factor ramp_A/ramp_B. // ramp_B=ramp_A*ramp_B_factor/4096
-          //if (sys_addr[19:0]==20'h000D0)  sin_ref               <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic reference
-          //if (sys_addr[19:0]==20'h000D4)  cos_ref               <=  sys_wdata[14-1: 0] ; // lock-in modulation cosinus harmonic reference
-          //if (sys_addr[19:0]==20'h000D8)  cos_1f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference
-          //if (sys_addr[19:0]==20'h000DC)  cos_2f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference and double frequency
-          //if (sys_addr[19:0]==20'h000E0)  cos_3f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference and triple frequency
-          //if (sys_addr[19:0]==20'h000E4)  sq_ref_b              <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary reference
-          //if (sys_addr[19:0]==20'h000E8)  sq_quad_b             <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary quadrature
-          //if (sys_addr[19:0]==20'h000EC)  sq_phas_b             <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary with phase respect to reference
-          //if (sys_addr[19:0]==20'h000F0)  sq_ref                <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal reference
-          //if (sys_addr[19:0]==20'h000F4)  sq_quad               <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal quadrature
-          //if (sys_addr[19:0]==20'h000F8)  sq_phas               <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal with phase relation to reference
-          //if (sys_addr[19:0]==20'h000FC)  in1                   <=  sys_wdata[14-1: 0] ; // Input signal IN1
-          //if (sys_addr[19:0]==20'h00100)  in2                   <=  sys_wdata[14-1: 0] ; // Input signal IN2
-          //if (sys_addr[19:0]==20'h00104)  out1                  <=  sys_wdata[14-1: 0] ; // signal for RP RF DAC Out1
-          //if (sys_addr[19:0]==20'h00108)  out2                  <=  sys_wdata[14-1: 0] ; // signal for RP RF DAC Out2
-          //if (sys_addr[19:0]==20'h0010C)  slow_out1             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 1
-          //if (sys_addr[19:0]==20'h00110)  slow_out2             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 2
-          //if (sys_addr[19:0]==20'h00114)  slow_out3             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 3
-          //if (sys_addr[19:0]==20'h00118)  slow_out4             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 4
-          //if (sys_addr[19:0]==20'h0011C)  oscA                  <=  sys_wdata[14-1: 0] ; // signal for Oscilloscope Channel A
-          //if (sys_addr[19:0]==20'h00120)  oscB                  <=  sys_wdata[14-1: 0] ; // signal for Oscilloscope Channel B
-          //if (sys_addr[19:0]==20'h00124)  X_28                  <=  sys_wdata[28-1: 0] ; // Demodulated signal from sin_ref
-          //if (sys_addr[19:0]==20'h00128)  Y_28                  <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_ref
-          //if (sys_addr[19:0]==20'h0012C)  F1_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_1f
-          //if (sys_addr[19:0]==20'h00130)  F2_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_2f
-          //if (sys_addr[19:0]==20'h00134)  F3_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_3f
-          //if (sys_addr[19:0]==20'h00138)  sqX_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_ref
-          //if (sys_addr[19:0]==20'h0013C)  sqY_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_quad
-          //if (sys_addr[19:0]==20'h00140)  sqF_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_phas
-          //if (sys_addr[19:0]==20'h00144)  cnt_clk               <=  sys_wdata[32-1: 0] ; // Clock count
-          //if (sys_addr[19:0]==20'h00148)  cnt_clk2              <=  sys_wdata[32-1: 0] ; // Clock count
-            if (sys_addr[19:0]==20'h0014C)  read_ctrl             <=  sys_wdata[ 3-1: 0] ; // [unused,start_clk,Freeze]
-            if (sys_addr[19:0]==20'h00150)  pidA_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidA input
-            if (sys_addr[19:0]==20'h00154)  pidA_PSR              <=  sys_wdata[ 3-1: 0] ; // pidA PSR
-            if (sys_addr[19:0]==20'h00158)  pidA_ISR              <=  sys_wdata[ 4-1: 0] ; // pidA ISR
-            if (sys_addr[19:0]==20'h0015C)  pidA_DSR              <=  sys_wdata[ 3-1: 0] ; // pidA DSR
-            if (sys_addr[19:0]==20'h00160)  pidA_SAT              <=  sys_wdata[14-1: 0] ; // pidA saturation control
-            if (sys_addr[19:0]==20'h00164)  pidA_sp               <=  sys_wdata[14-1: 0] ; // pidA set_point
-            if (sys_addr[19:0]==20'h00168)  pidA_ofs              <=  sys_wdata[14-1: 0] ; // pidA offset
-            if (sys_addr[19:0]==20'h0016C)  pidA_kp               <=  sys_wdata[14-1: 0] ; // pidA proportional constant
-            if (sys_addr[19:0]==20'h00170)  pidA_ki               <=  sys_wdata[14-1: 0] ; // pidA integral constant
-            if (sys_addr[19:0]==20'h00174)  pidA_kd               <=  sys_wdata[14-1: 0] ; // pidA derivative constant
-          //if (sys_addr[19:0]==20'h00178)  pidA_in               <=  sys_wdata[14-1: 0] ; // pidA input
-          //if (sys_addr[19:0]==20'h0017C)  pidA_out              <=  sys_wdata[14-1: 0] ; // pidA output
-            if (sys_addr[19:0]==20'h00180)  pidA_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h00184)  ctrl_A                <=  sys_wdata[14-1: 0] ; // control_A: pidA_out + ramp_A
-            if (sys_addr[19:0]==20'h00188)  pidB_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidB input
-            if (sys_addr[19:0]==20'h0018C)  pidB_PSR              <=  sys_wdata[ 3-1: 0] ; // pidB PSR
-            if (sys_addr[19:0]==20'h00190)  pidB_ISR              <=  sys_wdata[ 4-1: 0] ; // pidB ISR
-            if (sys_addr[19:0]==20'h00194)  pidB_DSR              <=  sys_wdata[ 3-1: 0] ; // pidB DSR
-            if (sys_addr[19:0]==20'h00198)  pidB_SAT              <=  sys_wdata[14-1: 0] ; // pidB saturation control
-            if (sys_addr[19:0]==20'h0019C)  pidB_sp               <=  sys_wdata[14-1: 0] ; // pidB set_point
-            if (sys_addr[19:0]==20'h001A0)  pidB_ofs              <=  sys_wdata[14-1: 0] ; // pidB offset
-            if (sys_addr[19:0]==20'h001A4)  pidB_kp               <=  sys_wdata[14-1: 0] ; // pidB proportional constant
-            if (sys_addr[19:0]==20'h001A8)  pidB_ki               <=  sys_wdata[14-1: 0] ; // pidB integral constant
-            if (sys_addr[19:0]==20'h001AC)  pidB_kd               <=  sys_wdata[14-1: 0] ; // pidB derivative constant
-          //if (sys_addr[19:0]==20'h001B0)  pidB_in               <=  sys_wdata[14-1: 0] ; // pidB input
-          //if (sys_addr[19:0]==20'h001B4)  pidB_out              <=  sys_wdata[14-1: 0] ; // pidB output
-            if (sys_addr[19:0]==20'h001B8)  pidB_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h001BC)  ctrl_B                <=  sys_wdata[14-1: 0] ; // control_B: pidB_out + ramp_B
-            if (sys_addr[19:0]==20'h001C0)  pidC_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidC input
-            if (sys_addr[19:0]==20'h001C4)  pidC_PSR              <=  sys_wdata[ 3-1: 0] ; // pidC PSR
-            if (sys_addr[19:0]==20'h001C8)  pidC_ISR              <=  sys_wdata[ 4-1: 0] ; // pidC ISR
-            if (sys_addr[19:0]==20'h001CC)  pidC_DSR              <=  sys_wdata[ 3-1: 0] ; // pidC DSR
-            if (sys_addr[19:0]==20'h001D0)  pidC_SAT              <=  sys_wdata[14-1: 0] ; // pidC saturation control
-            if (sys_addr[19:0]==20'h001D4)  pidC_sp               <=  sys_wdata[14-1: 0] ; // pidC set_point
-            if (sys_addr[19:0]==20'h001D8)  pidC_ofs              <=  sys_wdata[14-1: 0] ; // pidC offset
-            if (sys_addr[19:0]==20'h001DC)  pidC_kp               <=  sys_wdata[14-1: 0] ; // pidC proportional constant
-            if (sys_addr[19:0]==20'h001E0)  pidC_ki               <=  sys_wdata[14-1: 0] ; // pidC integral constant
-            if (sys_addr[19:0]==20'h001E4)  pidC_kd               <=  sys_wdata[14-1: 0] ; // pidC derivative constant
-          //if (sys_addr[19:0]==20'h001E8)  pidC_in               <=  sys_wdata[14-1: 0] ; // pidC input
-          //if (sys_addr[19:0]==20'h001EC)  pidC_out              <=  sys_wdata[14-1: 0] ; // pidC output
-            if (sys_addr[19:0]==20'h001F0)  pidC_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
-          //if (sys_addr[19:0]==20'h001F4)  ctrl_C                <=  sys_wdata[14-1: 0] ; // control_C: pidC_out + ramp_A
-            if (sys_addr[19:0]==20'h001F8)  aux_A                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
-            if (sys_addr[19:0]==20'h001FC)  aux_B                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
+          //if (sys_addr[19:0]==20'h000B4)  ramp_C                <=  sys_wdata[14-1: 0] ; // ramp signal C
+            if (sys_addr[19:0]==20'h000B8)  ramp_step             <=  sys_wdata[32-1: 0] ; // period of the triangular ramp signal
+            if (sys_addr[19:0]==20'h000BC)  ramp_low_lim          <=  sys_wdata[14-1: 0] ; // ramp low limit
+            if (sys_addr[19:0]==20'h000C0)  ramp_hig_lim          <=  sys_wdata[14-1: 0] ; // ramp high limit
+            if (sys_addr[19:0]==20'h000C4)  ramp_reset            <= |sys_wdata[32-1: 0] ; // ramp reset config
+            if (sys_addr[19:0]==20'h000C8)  ramp_enable           <= |sys_wdata[32-1: 0] ; // ramp enable/disable switch
+            if (sys_addr[19:0]==20'h000CC)  ramp_direction        <= |sys_wdata[32-1: 0] ; // ramp starting direction (up/down)
+            if (sys_addr[19:0]==20'h000D0)  ramp_B_factor         <=  sys_wdata[14-1: 0] ; // proportional factor ramp_A/ramp_B. // ramp_B=ramp_A*ramp_B_factor/4096
+          //if (sys_addr[19:0]==20'h000D4)  sin_ref               <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic reference
+          //if (sys_addr[19:0]==20'h000D8)  cos_ref               <=  sys_wdata[14-1: 0] ; // lock-in modulation cosinus harmonic reference
+          //if (sys_addr[19:0]==20'h000DC)  cos_1f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference
+          //if (sys_addr[19:0]==20'h000E0)  cos_2f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference and double frequency
+          //if (sys_addr[19:0]==20'h000E4)  cos_3f                <=  sys_wdata[14-1: 0] ; // lock-in modulation sinus harmonic signal with phase relation to reference and triple frequency
+          //if (sys_addr[19:0]==20'h000E8)  sq_ref_b              <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary reference
+          //if (sys_addr[19:0]==20'h000EC)  sq_quad_b             <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary quadrature
+          //if (sys_addr[19:0]==20'h000F0)  sq_phas_b             <=  sys_wdata[ 1-1: 0] ; // lock-in modulation binary with phase respect to reference
+          //if (sys_addr[19:0]==20'h000F4)  sq_ref                <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal reference
+          //if (sys_addr[19:0]==20'h000F8)  sq_quad               <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal quadrature
+          //if (sys_addr[19:0]==20'h000FC)  sq_phas               <=  sys_wdata[14-1: 0] ; // lock-in modulation square signal with phase relation to reference
+          //if (sys_addr[19:0]==20'h00100)  in1                   <=  sys_wdata[14-1: 0] ; // Input signal IN1
+          //if (sys_addr[19:0]==20'h00104)  in2                   <=  sys_wdata[14-1: 0] ; // Input signal IN2
+          //if (sys_addr[19:0]==20'h00108)  out1                  <=  sys_wdata[14-1: 0] ; // signal for RP RF DAC Out1
+          //if (sys_addr[19:0]==20'h0010C)  out2                  <=  sys_wdata[14-1: 0] ; // signal for RP RF DAC Out2
+          //if (sys_addr[19:0]==20'h00110)  slow_out1             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 1
+          //if (sys_addr[19:0]==20'h00114)  slow_out2             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 2
+          //if (sys_addr[19:0]==20'h00118)  slow_out3             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 3
+          //if (sys_addr[19:0]==20'h0011C)  slow_out4             <=  sys_wdata[12-1: 0] ; // signal for RP slow DAC 4
+          //if (sys_addr[19:0]==20'h00120)  oscA                  <=  sys_wdata[14-1: 0] ; // signal for Oscilloscope Channel A
+          //if (sys_addr[19:0]==20'h00124)  oscB                  <=  sys_wdata[14-1: 0] ; // signal for Oscilloscope Channel B
+          //if (sys_addr[19:0]==20'h00128)  X_28                  <=  sys_wdata[28-1: 0] ; // Demodulated signal from sin_ref
+          //if (sys_addr[19:0]==20'h0012C)  Y_28                  <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_ref
+          //if (sys_addr[19:0]==20'h00130)  F1_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_1f
+          //if (sys_addr[19:0]==20'h00134)  F2_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_2f
+          //if (sys_addr[19:0]==20'h00138)  F3_28                 <=  sys_wdata[28-1: 0] ; // Demodulated signal from cos_3f
+          //if (sys_addr[19:0]==20'h0013C)  sqX_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_ref
+          //if (sys_addr[19:0]==20'h00140)  sqY_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_quad
+          //if (sys_addr[19:0]==20'h00144)  sqF_28                <=  sys_wdata[28-1: 0] ; // Demodulated signal from sq_phas
+          //if (sys_addr[19:0]==20'h00148)  cnt_clk               <=  sys_wdata[32-1: 0] ; // Clock count
+          //if (sys_addr[19:0]==20'h0014C)  cnt_clk2              <=  sys_wdata[32-1: 0] ; // Clock count
+            if (sys_addr[19:0]==20'h00150)  read_ctrl             <=  sys_wdata[ 3-1: 0] ; // [unused,start_clk,Freeze]
+            if (sys_addr[19:0]==20'h00154)  pidA_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidA input
+            if (sys_addr[19:0]==20'h00158)  pidA_PSR              <=  sys_wdata[ 3-1: 0] ; // pidA PSR
+            if (sys_addr[19:0]==20'h0015C)  pidA_ISR              <=  sys_wdata[ 4-1: 0] ; // pidA ISR
+            if (sys_addr[19:0]==20'h00160)  pidA_DSR              <=  sys_wdata[ 3-1: 0] ; // pidA DSR
+            if (sys_addr[19:0]==20'h00164)  pidA_SAT              <=  sys_wdata[14-1: 0] ; // pidA saturation control
+            if (sys_addr[19:0]==20'h00168)  pidA_sp               <=  sys_wdata[14-1: 0] ; // pidA set_point
+            if (sys_addr[19:0]==20'h0016C)  pidA_ofs              <=  sys_wdata[14-1: 0] ; // pidA offset
+            if (sys_addr[19:0]==20'h00170)  pidA_kp               <=  sys_wdata[14-1: 0] ; // pidA proportional constant
+            if (sys_addr[19:0]==20'h00174)  pidA_ki               <=  sys_wdata[14-1: 0] ; // pidA integral constant
+            if (sys_addr[19:0]==20'h00178)  pidA_kd               <=  sys_wdata[14-1: 0] ; // pidA derivative constant
+          //if (sys_addr[19:0]==20'h0017C)  pidA_in               <=  sys_wdata[14-1: 0] ; // pidA input
+          //if (sys_addr[19:0]==20'h00180)  pidA_out              <=  sys_wdata[14-1: 0] ; // pidA output
+            if (sys_addr[19:0]==20'h00184)  pidA_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h00188)  ctrl_A                <=  sys_wdata[14-1: 0] ; // control_A: pidA_out + ramp_A
+            if (sys_addr[19:0]==20'h0018C)  pidB_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidB input
+            if (sys_addr[19:0]==20'h00190)  pidB_PSR              <=  sys_wdata[ 3-1: 0] ; // pidB PSR
+            if (sys_addr[19:0]==20'h00194)  pidB_ISR              <=  sys_wdata[ 4-1: 0] ; // pidB ISR
+            if (sys_addr[19:0]==20'h00198)  pidB_DSR              <=  sys_wdata[ 3-1: 0] ; // pidB DSR
+            if (sys_addr[19:0]==20'h0019C)  pidB_SAT              <=  sys_wdata[14-1: 0] ; // pidB saturation control
+            if (sys_addr[19:0]==20'h001A0)  pidB_sp               <=  sys_wdata[14-1: 0] ; // pidB set_point
+            if (sys_addr[19:0]==20'h001A4)  pidB_ofs              <=  sys_wdata[14-1: 0] ; // pidB offset
+            if (sys_addr[19:0]==20'h001A8)  pidB_kp               <=  sys_wdata[14-1: 0] ; // pidB proportional constant
+            if (sys_addr[19:0]==20'h001AC)  pidB_ki               <=  sys_wdata[14-1: 0] ; // pidB integral constant
+            if (sys_addr[19:0]==20'h001B0)  pidB_kd               <=  sys_wdata[14-1: 0] ; // pidB derivative constant
+          //if (sys_addr[19:0]==20'h001B4)  pidB_in               <=  sys_wdata[14-1: 0] ; // pidB input
+          //if (sys_addr[19:0]==20'h001B8)  pidB_out              <=  sys_wdata[14-1: 0] ; // pidB output
+            if (sys_addr[19:0]==20'h001BC)  pidB_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h001C0)  ctrl_B                <=  sys_wdata[14-1: 0] ; // control_B: pidB_out + ramp_B
+            if (sys_addr[19:0]==20'h001C4)  pidC_sw               <=  sys_wdata[ 5-1: 0] ; // switch selector for pidC input
+            if (sys_addr[19:0]==20'h001C8)  pidC_PSR              <=  sys_wdata[ 3-1: 0] ; // pidC PSR
+            if (sys_addr[19:0]==20'h001CC)  pidC_ISR              <=  sys_wdata[ 4-1: 0] ; // pidC ISR
+            if (sys_addr[19:0]==20'h001D0)  pidC_DSR              <=  sys_wdata[ 3-1: 0] ; // pidC DSR
+            if (sys_addr[19:0]==20'h001D4)  pidC_SAT              <=  sys_wdata[14-1: 0] ; // pidC saturation control
+            if (sys_addr[19:0]==20'h001D8)  pidC_sp               <=  sys_wdata[14-1: 0] ; // pidC set_point
+            if (sys_addr[19:0]==20'h001DC)  pidC_ofs              <=  sys_wdata[14-1: 0] ; // pidC offset
+            if (sys_addr[19:0]==20'h001E0)  pidC_kp               <=  sys_wdata[14-1: 0] ; // pidC proportional constant
+            if (sys_addr[19:0]==20'h001E4)  pidC_ki               <=  sys_wdata[14-1: 0] ; // pidC integral constant
+            if (sys_addr[19:0]==20'h001E8)  pidC_kd               <=  sys_wdata[14-1: 0] ; // pidC derivative constant
+          //if (sys_addr[19:0]==20'h001EC)  pidC_in               <=  sys_wdata[14-1: 0] ; // pidC input
+          //if (sys_addr[19:0]==20'h001F0)  pidC_out              <=  sys_wdata[14-1: 0] ; // pidC output
+            if (sys_addr[19:0]==20'h001F4)  pidC_ctrl             <=  sys_wdata[ 3-1: 0] ; // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
+          //if (sys_addr[19:0]==20'h001F8)  ctrl_C                <=  sys_wdata[14-1: 0] ; // control_C: pidC_out + ramp_C
+            if (sys_addr[19:0]==20'h001FC)  aux_A                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
+            if (sys_addr[19:0]==20'h00200)  aux_B                 <=  sys_wdata[14-1: 0] ; // auxiliar value of 14 bits
         end
     end
     //---------------------------------------------------------------------------------
@@ -1547,89 +1549,90 @@ module lock(
             20'h000A8 : begin sys_ack <= sys_en;  sys_rdata <=                                   gen_mod_sqp   ; end // square signal period
             20'h000AC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_A[13]}}        ,           ramp_A  }; end // ramp signal A
             20'h000B0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_B[13]}}        ,           ramp_B  }; end // ramp signal B
-            20'h000B4 : begin sys_ack <= sys_en;  sys_rdata <=                                     ramp_step   ; end // period of the triangular ramp signal
-            20'h000B8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_low_lim[13]}}  ,     ramp_low_lim  }; end // ramp low limit
-            20'h000BC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_hig_lim[13]}}  ,     ramp_hig_lim  }; end // ramp high limit
-            20'h000C0 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,       ramp_reset  }; end // ramp reset config
-            20'h000C4 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,      ramp_enable  }; end // ramp enable/disable switch
-            20'h000C8 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,   ramp_direction  }; end // ramp starting direction (up/down)
-            20'h000CC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_B_factor[13]}} ,    ramp_B_factor  }; end // proportional factor ramp_A/ramp_B. // ramp_B=ramp_A*ramp_B_factor/4096
-            20'h000D0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sin_ref[13]}}       ,          sin_ref  }; end // lock-in modulation sinus harmonic reference
-            20'h000D4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_ref[13]}}       ,          cos_ref  }; end // lock-in modulation cosinus harmonic reference
-            20'h000D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_1f[13]}}        ,           cos_1f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference
-            20'h000DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_2f[13]}}        ,           cos_2f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference and double frequency
-            20'h000E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_3f[13]}}        ,           cos_3f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference and triple frequency
-            20'h000E4 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,         sq_ref_b  }; end // lock-in modulation binary reference
-            20'h000E8 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,        sq_quad_b  }; end // lock-in modulation binary quadrature
-            20'h000EC : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,        sq_phas_b  }; end // lock-in modulation binary with phase respect to reference
-            20'h000F0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_ref[13]}}        ,           sq_ref  }; end // lock-in modulation square signal reference
-            20'h000F4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_quad[13]}}       ,          sq_quad  }; end // lock-in modulation square signal quadrature
-            20'h000F8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_phas[13]}}       ,          sq_phas  }; end // lock-in modulation square signal with phase relation to reference
-            20'h000FC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{in1[13]}}           ,              in1  }; end // Input signal IN1
-            20'h00100 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{in2[13]}}           ,              in2  }; end // Input signal IN2
-            20'h00104 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{out1[13]}}          ,             out1  }; end // signal for RP RF DAC Out1
-            20'h00108 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{out2[13]}}          ,             out2  }; end // signal for RP RF DAC Out2
-            20'h0010C : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out1  }; end // signal for RP slow DAC 1
-            20'h00110 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out2  }; end // signal for RP slow DAC 2
-            20'h00114 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out3  }; end // signal for RP slow DAC 3
-            20'h00118 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out4  }; end // signal for RP slow DAC 4
-            20'h0011C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{oscA[13]}}          ,             oscA  }; end // signal for Oscilloscope Channel A
-            20'h00120 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{oscB[13]}}          ,             oscB  }; end // signal for Oscilloscope Channel B
-            20'h00124 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{X_28_reg[27]}}      ,         X_28_reg  }; end // Demodulated signal from sin_ref
-            20'h00128 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{Y_28_reg[27]}}      ,         Y_28_reg  }; end // Demodulated signal from cos_ref
-            20'h0012C : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F1_28_reg[27]}}     ,        F1_28_reg  }; end // Demodulated signal from cos_1f
-            20'h00130 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F2_28_reg[27]}}     ,        F2_28_reg  }; end // Demodulated signal from cos_2f
-            20'h00134 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F3_28_reg[27]}}     ,        F3_28_reg  }; end // Demodulated signal from cos_3f
-            20'h00138 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqX_28_reg[27]}}    ,       sqX_28_reg  }; end // Demodulated signal from sq_ref
-            20'h0013C : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqY_28_reg[27]}}    ,       sqY_28_reg  }; end // Demodulated signal from sq_quad
-            20'h00140 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqF_28_reg[27]}}    ,       sqF_28_reg  }; end // Demodulated signal from sq_phas
-            20'h00144 : begin sys_ack <= sys_en;  sys_rdata <=                                       cnt_clk   ; end // Clock count
-            20'h00148 : begin sys_ack <= sys_en;  sys_rdata <=                                      cnt_clk2   ; end // Clock count
-            20'h0014C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        read_ctrl  }; end // [unused,start_clk,Freeze]
-            20'h00150 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidA_sw  }; end // switch selector for pidA input
-            20'h00154 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidA_PSR  }; end // pidA PSR
-            20'h00158 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidA_ISR  }; end // pidA ISR
-            20'h0015C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidA_DSR  }; end // pidA DSR
-            20'h00160 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidA_SAT  }; end // pidA saturation control
-            20'h00164 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_sp[13]}}       ,          pidA_sp  }; end // pidA set_point
-            20'h00168 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ofs[13]}}      ,         pidA_ofs  }; end // pidA offset
-            20'h0016C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kp[13]}}       ,          pidA_kp  }; end // pidA proportional constant
-            20'h00170 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ki[13]}}       ,          pidA_ki  }; end // pidA integral constant
-            20'h00174 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kd[13]}}       ,          pidA_kd  }; end // pidA derivative constant
-            20'h00178 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_in[13]}}       ,          pidA_in  }; end // pidA input
-            20'h0017C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_out[13]}}      ,         pidA_out  }; end // pidA output
-            20'h00180 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidA_ctrl  }; end // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
-            20'h00184 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_A_reg[13]}}    ,       ctrl_A_reg  }; end // control_A: pidA_out + ramp_A
-            20'h00188 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidB_sw  }; end // switch selector for pidB input
-            20'h0018C : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_PSR  }; end // pidB PSR
-            20'h00190 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidB_ISR  }; end // pidB ISR
-            20'h00194 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_DSR  }; end // pidB DSR
-            20'h00198 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidB_SAT  }; end // pidB saturation control
-            20'h0019C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_sp[13]}}       ,          pidB_sp  }; end // pidB set_point
-            20'h001A0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ofs[13]}}      ,         pidB_ofs  }; end // pidB offset
-            20'h001A4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kp[13]}}       ,          pidB_kp  }; end // pidB proportional constant
-            20'h001A8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ki[13]}}       ,          pidB_ki  }; end // pidB integral constant
-            20'h001AC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kd[13]}}       ,          pidB_kd  }; end // pidB derivative constant
-            20'h001B0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_in[13]}}       ,          pidB_in  }; end // pidB input
-            20'h001B4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_out[13]}}      ,         pidB_out  }; end // pidB output
-            20'h001B8 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidB_ctrl  }; end // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
-            20'h001BC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_B_reg[13]}}    ,       ctrl_B_reg  }; end // control_B: pidB_out + ramp_B
-            20'h001C0 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidC_sw  }; end // switch selector for pidC input
-            20'h001C4 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_PSR  }; end // pidC PSR
-            20'h001C8 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidC_ISR  }; end // pidC ISR
-            20'h001CC : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_DSR  }; end // pidC DSR
-            20'h001D0 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidC_SAT  }; end // pidC saturation control
-            20'h001D4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_sp[13]}}       ,          pidC_sp  }; end // pidC set_point
-            20'h001D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ofs[13]}}      ,         pidC_ofs  }; end // pidC offset
-            20'h001DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kp[13]}}       ,          pidC_kp  }; end // pidC proportional constant
-            20'h001E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ki[13]}}       ,          pidC_ki  }; end // pidC integral constant
-            20'h001E4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kd[13]}}       ,          pidC_kd  }; end // pidC derivative constant
-            20'h001E8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_in[13]}}       ,          pidC_in  }; end // pidC input
-            20'h001EC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_out[13]}}      ,         pidC_out  }; end // pidC output
-            20'h001F0 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidC_ctrl  }; end // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
-            20'h001F4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_C_reg[13]}}    ,       ctrl_C_reg  }; end // control_C: pidC_out + ramp_A
-            20'h001F8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_A[13]}}         ,            aux_A  }; end // auxiliar value of 14 bits
-            20'h001FC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_B[13]}}         ,            aux_B  }; end // auxiliar value of 14 bits
+            20'h000B4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_C[13]}}        ,           ramp_C  }; end // ramp signal C
+            20'h000B8 : begin sys_ack <= sys_en;  sys_rdata <=                                     ramp_step   ; end // period of the triangular ramp signal
+            20'h000BC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_low_lim[13]}}  ,     ramp_low_lim  }; end // ramp low limit
+            20'h000C0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_hig_lim[13]}}  ,     ramp_hig_lim  }; end // ramp high limit
+            20'h000C4 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,       ramp_reset  }; end // ramp reset config
+            20'h000C8 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,      ramp_enable  }; end // ramp enable/disable switch
+            20'h000CC : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,   ramp_direction  }; end // ramp starting direction (up/down)
+            20'h000D0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ramp_B_factor[13]}} ,    ramp_B_factor  }; end // proportional factor ramp_A/ramp_B. // ramp_B=ramp_A*ramp_B_factor/4096
+            20'h000D4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sin_ref[13]}}       ,          sin_ref  }; end // lock-in modulation sinus harmonic reference
+            20'h000D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_ref[13]}}       ,          cos_ref  }; end // lock-in modulation cosinus harmonic reference
+            20'h000DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_1f[13]}}        ,           cos_1f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference
+            20'h000E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_2f[13]}}        ,           cos_2f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference and double frequency
+            20'h000E4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{cos_3f[13]}}        ,           cos_3f  }; end // lock-in modulation sinus harmonic signal with phase relation to reference and triple frequency
+            20'h000E8 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,         sq_ref_b  }; end // lock-in modulation binary reference
+            20'h000EC : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,        sq_quad_b  }; end // lock-in modulation binary quadrature
+            20'h000F0 : begin sys_ack <= sys_en;  sys_rdata <= {  31'b0                   ,        sq_phas_b  }; end // lock-in modulation binary with phase respect to reference
+            20'h000F4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_ref[13]}}        ,           sq_ref  }; end // lock-in modulation square signal reference
+            20'h000F8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_quad[13]}}       ,          sq_quad  }; end // lock-in modulation square signal quadrature
+            20'h000FC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{sq_phas[13]}}       ,          sq_phas  }; end // lock-in modulation square signal with phase relation to reference
+            20'h00100 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{in1[13]}}           ,              in1  }; end // Input signal IN1
+            20'h00104 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{in2[13]}}           ,              in2  }; end // Input signal IN2
+            20'h00108 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{out1[13]}}          ,             out1  }; end // signal for RP RF DAC Out1
+            20'h0010C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{out2[13]}}          ,             out2  }; end // signal for RP RF DAC Out2
+            20'h00110 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out1  }; end // signal for RP slow DAC 1
+            20'h00114 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out2  }; end // signal for RP slow DAC 2
+            20'h00118 : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out3  }; end // signal for RP slow DAC 3
+            20'h0011C : begin sys_ack <= sys_en;  sys_rdata <= {  20'b0                   ,        slow_out4  }; end // signal for RP slow DAC 4
+            20'h00120 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{oscA[13]}}          ,             oscA  }; end // signal for Oscilloscope Channel A
+            20'h00124 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{oscB[13]}}          ,             oscB  }; end // signal for Oscilloscope Channel B
+            20'h00128 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{X_28_reg[27]}}      ,         X_28_reg  }; end // Demodulated signal from sin_ref
+            20'h0012C : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{Y_28_reg[27]}}      ,         Y_28_reg  }; end // Demodulated signal from cos_ref
+            20'h00130 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F1_28_reg[27]}}     ,        F1_28_reg  }; end // Demodulated signal from cos_1f
+            20'h00134 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F2_28_reg[27]}}     ,        F2_28_reg  }; end // Demodulated signal from cos_2f
+            20'h00138 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{F3_28_reg[27]}}     ,        F3_28_reg  }; end // Demodulated signal from cos_3f
+            20'h0013C : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqX_28_reg[27]}}    ,       sqX_28_reg  }; end // Demodulated signal from sq_ref
+            20'h00140 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqY_28_reg[27]}}    ,       sqY_28_reg  }; end // Demodulated signal from sq_quad
+            20'h00144 : begin sys_ack <= sys_en;  sys_rdata <= {  { 4{sqF_28_reg[27]}}    ,       sqF_28_reg  }; end // Demodulated signal from sq_phas
+            20'h00148 : begin sys_ack <= sys_en;  sys_rdata <=                                       cnt_clk   ; end // Clock count
+            20'h0014C : begin sys_ack <= sys_en;  sys_rdata <=                                      cnt_clk2   ; end // Clock count
+            20'h00150 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        read_ctrl  }; end // [unused,start_clk,Freeze]
+            20'h00154 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidA_sw  }; end // switch selector for pidA input
+            20'h00158 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidA_PSR  }; end // pidA PSR
+            20'h0015C : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidA_ISR  }; end // pidA ISR
+            20'h00160 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidA_DSR  }; end // pidA DSR
+            20'h00164 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidA_SAT  }; end // pidA saturation control
+            20'h00168 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_sp[13]}}       ,          pidA_sp  }; end // pidA set_point
+            20'h0016C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ofs[13]}}      ,         pidA_ofs  }; end // pidA offset
+            20'h00170 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kp[13]}}       ,          pidA_kp  }; end // pidA proportional constant
+            20'h00174 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_ki[13]}}       ,          pidA_ki  }; end // pidA integral constant
+            20'h00178 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_kd[13]}}       ,          pidA_kd  }; end // pidA derivative constant
+            20'h0017C : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_in[13]}}       ,          pidA_in  }; end // pidA input
+            20'h00180 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidA_out[13]}}      ,         pidA_out  }; end // pidA output
+            20'h00184 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidA_ctrl  }; end // pidA control: [ pidA_ifreeze: integrator freeze , pidA_freeze: output freeze , pidA_irst:integrator reset]
+            20'h00188 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_A_reg[13]}}    ,       ctrl_A_reg  }; end // control_A: pidA_out + ramp_A
+            20'h0018C : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidB_sw  }; end // switch selector for pidB input
+            20'h00190 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_PSR  }; end // pidB PSR
+            20'h00194 : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidB_ISR  }; end // pidB ISR
+            20'h00198 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidB_DSR  }; end // pidB DSR
+            20'h0019C : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidB_SAT  }; end // pidB saturation control
+            20'h001A0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_sp[13]}}       ,          pidB_sp  }; end // pidB set_point
+            20'h001A4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ofs[13]}}      ,         pidB_ofs  }; end // pidB offset
+            20'h001A8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kp[13]}}       ,          pidB_kp  }; end // pidB proportional constant
+            20'h001AC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_ki[13]}}       ,          pidB_ki  }; end // pidB integral constant
+            20'h001B0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_kd[13]}}       ,          pidB_kd  }; end // pidB derivative constant
+            20'h001B4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_in[13]}}       ,          pidB_in  }; end // pidB input
+            20'h001B8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidB_out[13]}}      ,         pidB_out  }; end // pidB output
+            20'h001BC : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidB_ctrl  }; end // pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]
+            20'h001C0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_B_reg[13]}}    ,       ctrl_B_reg  }; end // control_B: pidB_out + ramp_B
+            20'h001C4 : begin sys_ack <= sys_en;  sys_rdata <= {  27'b0                   ,          pidC_sw  }; end // switch selector for pidC input
+            20'h001C8 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_PSR  }; end // pidC PSR
+            20'h001CC : begin sys_ack <= sys_en;  sys_rdata <= {  28'b0                   ,         pidC_ISR  }; end // pidC ISR
+            20'h001D0 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,         pidC_DSR  }; end // pidC DSR
+            20'h001D4 : begin sys_ack <= sys_en;  sys_rdata <= {  18'b0                   ,         pidC_SAT  }; end // pidC saturation control
+            20'h001D8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_sp[13]}}       ,          pidC_sp  }; end // pidC set_point
+            20'h001DC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ofs[13]}}      ,         pidC_ofs  }; end // pidC offset
+            20'h001E0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kp[13]}}       ,          pidC_kp  }; end // pidC proportional constant
+            20'h001E4 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_ki[13]}}       ,          pidC_ki  }; end // pidC integral constant
+            20'h001E8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_kd[13]}}       ,          pidC_kd  }; end // pidC derivative constant
+            20'h001EC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_in[13]}}       ,          pidC_in  }; end // pidC input
+            20'h001F0 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{pidC_out[13]}}      ,         pidC_out  }; end // pidC output
+            20'h001F4 : begin sys_ack <= sys_en;  sys_rdata <= {  29'b0                   ,        pidC_ctrl  }; end // pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]
+            20'h001F8 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{ctrl_C_reg[13]}}    ,       ctrl_C_reg  }; end // control_C: pidC_out + ramp_C
+            20'h001FC : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_A[13]}}         ,            aux_A  }; end // auxiliar value of 14 bits
+            20'h00200 : begin sys_ack <= sys_en;  sys_rdata <= {  {18{aux_B[13]}}         ,            aux_B  }; end // auxiliar value of 14 bits
             default   : begin sys_ack <= sys_en;  sys_rdata <=  32'h0        ; end
         endcase
     end

@@ -31,20 +31,20 @@ all: $(CONTROLLERHF) fpga
 $(CONTROLLERHF):
 	$(MAKE) -C src clean
 	# Turn on DEBUG
-	sed 's?/* *#define DEBUG 1.*?#define DEBUG 1? ' -i src/main.h
-	$(MAKE) -C src
-	mv $(CONTROLLERHF) $(CONTROLLER_DBG)
-	$(MAKE) -C src clean
+	# sed 's?/* *#define DEBUG 1.*?#define DEBUG 1? ' -i src/main.h
+	# $(MAKE) -C src
+	# mv $(CONTROLLERHF) $(CONTROLLER_DBG)
+	# $(MAKE) -C src clean
 	# Turn off DEBUG
-	sed ' s?/* *#define DEBUG 1.*?// #define DEBUG 1? ' -i src/main.h
+	# sed ' s?/* *#define DEBUG 1.*?// #define DEBUG 1? ' -i src/main.h
 	# Turn on RELOAD
-	sed "s?/\\*RELOAD_DOCK_START\\*/.*/\\*RELOAD_DOCK_END\\*/?/*RELOAD_DOCK_START*/ PARAMS_LOCK_PARAMS - 1 /*RELOAD_DOCK_END*/?"  -i src/main.c
-	cp src/main.c src/main_$(CONTROLLER_RLD)_.c
-	$(MAKE) -C src
-	mv $(CONTROLLERHF) $(CONTROLLER_RLD)
-	$(MAKE) -C src clean
+	# sed "s?/\\*RELOAD_DOCK_START\\*/.*/\\*RELOAD_DOCK_END\\*/?/*RELOAD_DOCK_START*/ PARAMS_LOCK_PARAMS - 1 /*RELOAD_DOCK_END*/?"  -i src/main.c
+	# cp src/main.c src/main_$(CONTROLLER_RLD)_.c
+	# $(MAKE) -C src
+	# mv $(CONTROLLERHF) $(CONTROLLER_RLD)
+	# $(MAKE) -C src clean
 	# Turn off RELOAD
-	sed "s?/\\*RELOAD_DOCK_START\\*/.*/\\*RELOAD_DOCK_END\\*/?/*RELOAD_DOCK_START*/ PARAMS_NUM /*RELOAD_DOCK_END*/?"  -i src/main.c
+	# sed "s?/\\*RELOAD_DOCK_START\\*/.*/\\*RELOAD_DOCK_END\\*/?/*RELOAD_DOCK_START*/ PARAMS_NUM /*RELOAD_DOCK_END*/?"  -i src/main.c
 	$(MAKE) -C src
 	cp src/main.c src/main_$(CONTROLLERHF)_.c
 

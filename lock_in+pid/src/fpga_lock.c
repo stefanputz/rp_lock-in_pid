@@ -122,6 +122,7 @@ void reset_locks(void)
         g_lock_reg->gen_mod_sqp          =      0;
         g_lock_reg->ramp_A               =      0;
         g_lock_reg->ramp_B               =      0;
+        g_lock_reg->ramp_C               =      0;
         g_lock_reg->ramp_step            =      0;
         g_lock_reg->ramp_low_lim         =  -5000;
         g_lock_reg->ramp_hig_lim         =   5000;

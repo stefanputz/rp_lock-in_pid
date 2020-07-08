@@ -3045,8 +3045,6 @@ function lock_pidC_update(){
     $('#lock_lpf_sq_order').val( params.original.lock_lpf_sq_order % 4 );
 
 
-    $('#lock_ctrl_aux_set_pidA_enable').prop('checked', (params.original.lock_ctrl_aux_set_pidA_enable ? true : false));
-    $('#lock_ctrl_aux_set_pidB_enable').prop('checked', (params.original.lock_ctrl_aux_set_pidB_enable ? true : false));
     $('#lock_ctrl_aux_set_ramp_enable').prop('checked', (params.original.lock_ctrl_aux_set_ramp_enable ? true : false));
 
     if (params.original.lock_ctrl_aux_ramp_enable_ctrl)

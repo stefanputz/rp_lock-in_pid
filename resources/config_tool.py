@@ -21,8 +21,8 @@ do_py      = False
 
 #folder=''
 #folder='/home/lolo/Dropbox/Doctorado/github/rp_lock-in_pid'
-folder = 'C:\\Users\\Stefan Putz\\Documents\\fpga\\rp_lock-in_pid\\'
-
+folder = 'C:\\Users\\Stefan Putz\\Documents\\fpga\\rp_lock-in_pid'
+print(folder)
 
 #%%
 
@@ -114,8 +114,8 @@ f.add( name="slow_out4_sw"       , group=grp , val=    0, rw=True ,  nbits= 4, m
 
 # Lock control
 grp='lock_control'
-f.add( name="lock_control"       , group=grp , val= 1148, rw=True ,  nbits=13, min_val=          0, max_val=       2047, fpga_update=True , signed=False, desc="lock_control help" )
-f.add( name="lock_feedback"      , group=grp , val= 1148, rw=False,  nbits=13, min_val=          0, max_val=       2047, fpga_update=True , signed=False, desc="lock_control feedback" )
+f.add( name="lock_control"       , group=grp , val= 1148, rw=True ,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control help" )
+f.add( name="lock_feedback"      , group=grp , val= 1148, rw=False,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control feedback" )
 f.add( name="lock_trig_val"      , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="if lock_control ?? , this vals sets the voltage threshold that turns on the lock" )
 f.add( name="lock_trig_time"     , group=grp , val=    0, rw=True ,  nbits=32, min_val=          0, max_val= 4294967295, fpga_update=True , signed=False, desc="if lock_control ?? , this vals sets the time threshold that turns on the lock" )
 f.add( name="lock_trig_sw"       , group=grp , val=    0, rw=True ,  nbits= 4, min_val=          0, max_val=         15, fpga_update=True , signed=False, desc="selects signal for trigger" )
@@ -164,6 +164,7 @@ f.add( name="gen_mod_sqp"        , group=grp , val=    0, rw=True ,  nbits=32, m
 grp='gen_ramp'
 f.add( name="ramp_A"             , group=grp , val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="ramp signal A" )
 f.add( name="ramp_B"             , group=grp , val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="ramp signal B" )
+f.add( name="ramp_C"             , group=grp , val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="ramp signal C" )
 f.add( name="ramp_step"          , group=grp , val=    0, rw=True ,  nbits=32, min_val=          0, max_val= 4294967295, fpga_update=True , signed=False, desc="period of the triangular ramp signal" )
 f.add( name="ramp_low_lim"       , group=grp , val=-5000, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="ramp low limit" )
 f.add( name="ramp_hig_lim"       , group=grp , val= 5000, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="ramp high limit" )
@@ -262,7 +263,7 @@ f.add( name="pidC_kd"            , group=grp , val=    0, rw=True ,  nbits=14, m
 f.add( name="pidC_in"            , group=grp , val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC input" )
 f.add( name="pidC_out"           , group=grp , val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="pidC output" )
 f.add( name="pidC_ctrl"          , group=grp , val=    0, rw=True ,  nbits= 3, min_val=          0, max_val=          7, fpga_update=True , signed=False, desc="pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]" )
-f.add( name="ctrl_C"             , group=grp,  val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=False, signed=True , desc="control_C: pidC_out + ramp_A")
+f.add( name="ctrl_C"             , group=grp,  val=    0, rw=False,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=False, signed=True , desc="control_C: pidC_out + ramp_C")
 
 # aux
 grp='mix'
@@ -700,8 +701,8 @@ m.add( name="lock_slow_out3_sw"  , fpga_reg="slow_out3_sw"  , val=0    , rw=True
 m.add( name="lock_slow_out4_sw"  , fpga_reg="slow_out4_sw"  , val=0    , rw=True , nbits=4 , min_val=0         , max_val=15        , fpga_update=True , signed=False, group="outputs"        , desc="switch for muxer slow_out4")
 
 # group: lock_control
-m.add( name="lock_lock_control"  , fpga_reg="lock_control"  , val=1148 , rw=True , nbits=13, min_val=0         , max_val=2047      , fpga_update=True , signed=False, group="lock_control"   , desc="lock_control help")
-m.add( name="lock_lock_feedback" , fpga_reg="lock_feedback" , val=1148 , rw=False, nbits=13, min_val=0         , max_val=2047      , fpga_update=False, signed=False, group="lock_control"   , desc="lock_control feedback")
+m.add( name="lock_lock_control"  , fpga_reg="lock_control"  , val=4604 , rw=True , nbits=13, min_val=0         , max_val=8191      , fpga_update=True , signed=False, group="lock_control"   , desc="lock_control help")
+m.add( name="lock_lock_feedback" , fpga_reg="lock_feedback" , val=4604 , rw=False, nbits=13, min_val=0         , max_val=8191      , fpga_update=False, signed=False, group="lock_control"   , desc="lock_control feedback")
 m.add( name="lock_lock_trig_val" , fpga_reg="lock_trig_val" , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="lock_control"   , desc="if lock_control ?? , this vals sets the voltage threshold that turns on the lock")
 m.add( name="lock_lock_trig_time_val", fpga_reg="lock_trig_time", val=0    , rw=True , nbits=32, min_val=0         , max_val=4294967295, fpga_update=True , signed=False, group="lock_control"   , desc="if lock_control ?? , this vals sets the time threshold that turns on the lock")
 r.main_reg='lock_'+r.name
@@ -804,6 +805,7 @@ m.add( name="lock_gen_mod_sqp"   , fpga_reg="gen_mod_sqp"   , val=0    , rw=True
 # group: gen_ramp
 m.add( name="lock_ramp_A"        , fpga_reg="ramp_A"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="gen_ramp"       , desc="ramp signal A")
 m.add( name="lock_ramp_B"        , fpga_reg="ramp_B"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="gen_ramp"       , desc="ramp signal B")
+m.add( name="lock_ramp_C"        , fpga_reg="ramp_C"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="gen_ramp"       , desc="ramp signal C")
 m.add( name="lock_ramp_step"     , fpga_reg="ramp_step"     , val=0    , rw=True , nbits=32, min_val=0         , max_val=4294967295, fpga_update=True , signed=False, group="gen_ramp"       , desc="period of the triangular ramp signal")
 m.add( name="lock_ramp_low_lim"  , fpga_reg="ramp_low_lim"  , val=-5000, rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="gen_ramp"       , desc="ramp low limit")
 m.add( name="lock_ramp_hig_lim"  , fpga_reg="ramp_hig_lim"  , val=5000 , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="gen_ramp"       , desc="ramp high limit")
@@ -901,6 +903,7 @@ if True:
     r=f["pidB_ctrl"]; r.c_update='(((int)params[{:s}].value)<<2) + (((int)params[{:s}].value)<<1) + ((int)params[{:s}].value)'.format( m["lock_pidB_ifreeze"].cdef, m["lock_pidB_freeze"].cdef, m["lock_pidB_irst"].cdef)
 else:
     m.add( name="lock_pidB_ctrl"     , fpga_reg="pidB_ctrl"     , val=0    , rw=True , nbits=3 , min_val=0         , max_val=7         , fpga_update=True , signed=False, group="pidB"           , desc="pidB control: [ pidB_ifreeze: integrator freeze , pidB_freeze: output freeze , pidB_irst:integrator reset]")
+
 m.add( name="lock_ctrl_B"        , fpga_reg="ctrl_B"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidB"           , desc="control_B: pidB_out + ramp_B")
 
 # group: pidC
@@ -927,7 +930,8 @@ if True:
     r=f["pidC_ctrl"]; r.c_update='(((int)params[{:s}].value)<<2) + (((int)params[{:s}].value)<<1) + ((int)params[{:s}].value)'.format( m["lock_pidC_ifreeze"].cdef, m["lock_pidC_freeze"].cdef, m["lock_pidC_irst"].cdef)
 else:
     m.add( name="lock_pidC_ctrl"     , fpga_reg="pidC_ctrl"     , val=0    , rw=True , nbits=3 , min_val=0         , max_val=7         , fpga_update=True , signed=False, group="pidC"           , desc="pidC control: [ pidC_ifreeze: integrator freeze , pidC_freeze: output freeze , pidC_irst:integrator reset]")
-m.add( name="lock_ctrl_C"        , fpga_reg="ctrl_C"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidC"           , desc="control_C: pidC_out + ramp_A")
+
+m.add( name="lock_ctrl_C"        , fpga_reg="ctrl_C"        , val=0    , rw=False, nbits=14, min_val=-8192     , max_val=8191      , fpga_update=False, signed=True , group="pidC"           , desc="control_C: pidC_out + ramp_B")
 
 # group: mix
 m.add( name="lock_aux_A"         , fpga_reg="aux_A"         , val=0    , rw=True , nbits=14, min_val=-8192     , max_val=8191      , fpga_update=True , signed=True , group="mix"            , desc="auxiliar value of 14 bits")

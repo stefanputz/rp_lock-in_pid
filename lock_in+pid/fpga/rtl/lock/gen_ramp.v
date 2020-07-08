@@ -23,7 +23,7 @@ module gen_ramp #(parameter R=14)
     // outputs
     output                 trigger_low,
     output                 trigger_hig,
-    output signed [ R-1:0] outA, outB
+    output signed [ R-1:0] outA, outB, outC
     );
     
     // R resolution of input and output signals
@@ -168,6 +168,7 @@ module gen_ramp #(parameter R=14)
     
     assign outB     = $signed(outB_28[26:0]) >>> 12 ;
 
+    assign outC    = ramp_signal ;
     //assign outB     = relock_hig_lim ;
     //assign outB     = { 8'b0 , ramp_step_changed, trigger, slope , go , direction , enable};
     

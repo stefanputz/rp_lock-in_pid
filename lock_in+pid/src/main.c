@@ -314,8 +314,8 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_slow_out2_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out2 **/
     { "lock_slow_out3_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out3 **/
     { "lock_slow_out4_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out4 **/
-    { "lock_lock_control"             ,   1148, 1, 0,            0,         2047 }, /** lock_control help **/
-    { "lock_lock_feedback"            ,   1148, 0, 1,            0,         2047 }, /** lock_control feedback **/
+    { "lock_lock_control"             ,   1148, 1, 0,            0,         8191 }, /** lock_control help **/
+    { "lock_lock_feedback"            ,   1148, 0, 1,            0,         8191 }, /** lock_control feedback **/
     { "lock_lock_trig_val"            ,      0, 1, 0,        -8192,         8191 }, /** if lock_control ?? , this vals sets the voltage threshold that turns on the lock **/
     { "lock_lock_trig_time_val"       ,      0, 1, 0,            0,   0xffffffff }, /** if lock_control ?? , this vals sets the time threshold that turns on the lock **/
     { "lock_lock_trig_sw"             ,      0, 1, 0,            0,           15 }, /** selects signal for trigger **/
@@ -361,6 +361,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_gen_mod_sqp"              ,      0, 1, 0,            0,   0xffffffff }, /** square signal period **/
     { "lock_ramp_A"                   ,      0, 0, 1,        -8192,         8191 }, /** ramp signal A **/
     { "lock_ramp_B"                   ,      0, 0, 1,        -8192,         8191 }, /** ramp signal B **/
+    { "lock_ramp_C"                   ,      0, 0, 1,        -8192,         8191 }, /** ramp signal C **/
     { "lock_ramp_step"                ,      0, 1, 0,            0,   0xffffffff }, /** period of the triangular ramp signal **/
     { "lock_ramp_low_lim"             ,  -5000, 1, 0,        -8192,         8191 }, /** ramp low limit **/
     { "lock_ramp_hig_lim"             ,   5000, 1, 0,        -8192,         8191 }, /** ramp high limit **/
@@ -447,7 +448,7 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_pidC_irst"                ,      0, 1, 0,            0,            1 }, /** pidC_irst **/
     { "lock_pidC_freeze"              ,      0, 1, 0,            0,            1 }, /** pidC_freeze **/
     { "lock_pidC_ifreeze"             ,      0, 1, 0,            0,            1 }, /** pidC_ifreeze **/
-    { "lock_ctrl_C"                   ,      0, 0, 1,        -8192,         8191 }, /** control_C: pidC_out + ramp_A **/
+    { "lock_ctrl_C"                   ,      0, 0, 1,        -8192,         8191 }, /** control_C: pidC_out + ramp_B **/
     { "lock_aux_A"                    ,      0, 1, 0,        -8192,         8191 }, /** auxiliar value of 14 bits **/
     { "lock_aux_B"                    ,      0, 1, 0,        -8192,         8191 }, /** auxiliar value of 14 bits **/
     { "lock_ctrl_aux_lock_now"        ,      0, 0, 0,            0,            1 }, /** todo **/
