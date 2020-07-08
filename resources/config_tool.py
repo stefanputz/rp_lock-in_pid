@@ -114,8 +114,8 @@ f.add( name="slow_out4_sw"       , group=grp , val=    0, rw=True ,  nbits= 4, m
 
 # Lock control
 grp='lock_control'
-f.add( name="lock_control"       , group=grp , val= 1148, rw=True ,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control help" )
-f.add( name="lock_feedback"      , group=grp , val= 1148, rw=False,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control feedback" )
+f.add( name="lock_control"       , group=grp , val= 4604, rw=True ,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control help" )
+f.add( name="lock_feedback"      , group=grp , val= 4604, rw=False,  nbits=13, min_val=          0, max_val=       8191, fpga_update=True , signed=False, desc="lock_control feedback" )
 f.add( name="lock_trig_val"      , group=grp , val=    0, rw=True ,  nbits=14, min_val=      -8192, max_val=       8191, fpga_update=True , signed=True , desc="if lock_control ?? , this vals sets the voltage threshold that turns on the lock" )
 f.add( name="lock_trig_time"     , group=grp , val=    0, rw=True ,  nbits=32, min_val=          0, max_val= 4294967295, fpga_update=True , signed=False, desc="if lock_control ?? , this vals sets the time threshold that turns on the lock" )
 f.add( name="lock_trig_sw"       , group=grp , val=    0, rw=True ,  nbits= 4, min_val=          0, max_val=         15, fpga_update=True , signed=False, desc="selects signal for trigger" )
@@ -1888,10 +1888,8 @@ if False:
                         'pidA_out','pidB_out','sq_ref_b','test14','PID A + ramp','PID B + ramp'])
 
     h["lock_slow_out3_sw"].control = select(idd="lock_slow_out3_sw",
-                 items=['0','in1','in2','sin_ref','cos_ref','sin_1f ','sin_2f','sin_3f',
-                        'sq_ref','sq_quad','sq_fase','ramp_signal','Lock-in input','signal_a'
-                        ,'Xo','Yo','F1','F2','F3','sqx','sqy','sqf','pidA_in','pidB_in',
-                        'pidA_out','pidB_out','sq_ref_b','test14','PID A + scan','PID B + scan'])
+                 items=['0','in1','in2','in1_m_in2','sin_ref','cos_1f ','pidC_out','ctrl_C','sq_ref',
+                        'sq_fase','ramp_A','pidA_out','ctrl_A','ctrl_B','error','aux_A'])
 
 
     h["lock_slow_out4_sw"].control = select(idd="lock_slow_out4_sw",

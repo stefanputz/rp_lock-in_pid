@@ -1288,7 +1288,7 @@ module lock(
         slow_out2_sw           <=   4'd0     ; // switch for muxer slow_out2
         slow_out3_sw           <=   4'd0     ; // switch for muxer slow_out3
         slow_out4_sw           <=   4'd0     ; // switch for muxer slow_out4
-        lock_control           <=  13'd1148  ; // lock_control help
+        lock_control           <=  13'd4604  ; // lock_control help
         lock_trig_val          <=  14'd0     ; // if lock_control ?? , this vals sets the voltage threshold that turns on the lock
         lock_trig_time         <=  32'd0     ; // if lock_control ?? , this vals sets the time threshold that turns on the lock
         lock_trig_sw           <=   4'd0     ; // selects signal for trigger

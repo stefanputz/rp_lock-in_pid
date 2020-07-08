@@ -314,8 +314,8 @@ static rp_app_params_t rp_main_params[PARAMS_NUM+1] = {
     { "lock_slow_out2_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out2 **/
     { "lock_slow_out3_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out3 **/
     { "lock_slow_out4_sw"             ,      0, 1, 0,            0,           15 }, /** switch for muxer slow_out4 **/
-    { "lock_lock_control"             ,   1148, 1, 0,            0,         8191 }, /** lock_control help **/
-    { "lock_lock_feedback"            ,   1148, 0, 1,            0,         8191 }, /** lock_control feedback **/
+    { "lock_lock_control"             ,   4604, 1, 0,            0,         8191 }, /** lock_control help **/
+    { "lock_lock_feedback"            ,   4604, 0, 1,            0,         8191 }, /** lock_control feedback **/
     { "lock_lock_trig_val"            ,      0, 1, 0,        -8192,         8191 }, /** if lock_control ?? , this vals sets the voltage threshold that turns on the lock **/
     { "lock_lock_trig_time_val"       ,      0, 1, 0,            0,   0xffffffff }, /** if lock_control ?? , this vals sets the time threshold that turns on the lock **/
     { "lock_lock_trig_sw"             ,      0, 1, 0,            0,           15 }, /** selects signal for trigger **/
